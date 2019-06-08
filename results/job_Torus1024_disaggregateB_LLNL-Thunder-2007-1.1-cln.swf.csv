@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+6.15174961984,6.42305408006,16.1794320671,1973,Torus1024_disaggregateB,connected,0,1024,2000,0.0001,backfilling,146.654000044,250,LLNL-Thunder-2007-1.1-cln.swf

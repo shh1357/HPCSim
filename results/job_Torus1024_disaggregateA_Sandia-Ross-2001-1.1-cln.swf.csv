@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+4.00659529646,6.58766913338,1.67168380257,1999,Torus1024_disaggregateA,connected,0,1024,2000,0.0001,backfilling,188.233999968,216,Sandia-Ross-2001-1.1-cln.swf

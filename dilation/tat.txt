@@ -1,0 +1,5 @@
+#subtopology rs irs-repeat(d1) irs-repeat(d2) irs-repeat(d3) irs-repeat(d4) irs-loop(fso0) irs-loop(fso1) irs-loop(fso2) irs-loop(fso2-d2) irs-loop(fso2-d3) irs-loop(fso2-d4)
+2D-Mesh	0.8577	0.8774	0.8474	0.845	0.8449	0.777	0.77	0.75	0.745	0.74	0.74
+3D-Mesh	0.4706	0.4686	0.468	0.466	0.464	0.361	0.36	0.35	0.345	0.34	0.34
+3D-Torus	0.4507	0.4491	0.43	0.426	0.421	0.311	0.31	0.31	0.3	0.3	0.3
+Random	0.3580	0.3564	0.3451	0.3449	0.3448	0.2224	0.2221	0.222	0.22	0.2	0.2

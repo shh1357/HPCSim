@@ -1,0 +1,12 @@
+# cpu-uti queue-jobs max-queue-jobs queue-time uti response weighted-response slowdown aspl diameter
+# host-->3d-torus, guest-->
+2D-Mesh	0.5236	0.3898	6	0.0199	0.5307	0.7921	2.66	1.0128	4.1834	9.249
+3D-Mesh	0.2619	0.0517	1	0.0006	0.2537	0.4682	1.2262	1.0013	3.3821	7.8565
+Random(contiguous)	0.1751	0.0862	1	0.0005	0.1698	0.3562	0.6896	1.0020	3.3821	7.8565
+Random(non-contiguous)	0.1601	0.0690	1	0.0006	0.1699	0.3562	0.6897	1.0021	3.3821	7.8565
+# host-->random(a connected Watts–Strogatz small-world graph), guest-->
+# Regular(tree-like)	0.1624	3.5932	13	0.1341	0.1667	0.4898	0.8192	1.1902	3.7786	6.12
+# Random	0.1895	0.8983	7	0.0350	0.1675	0.3915	0.7203	1.0437	4.3850	10.8049
+# host-->random-regular, guest-->
+# Regular(tree-like)	0.1905	3.3393	16	0.1364	0.1759	0.4921	0.8158	1.1853	3.4045	4.855
+# Random	0.1877	0.0169	1	0.0053	0.1671	0.3614	0.6884	1.0002	n/a	n/a

@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+0.00113862570298,0.00320793760655,1.00232520907,1991,Torus1024_disaggregateB,connected,0,1024,2000,0.0001,backfilling,52.4949998856,250,LPC-EGEE-2004-1.2-cln.swf

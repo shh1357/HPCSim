@@ -1,0 +1,4 @@
+#wired fso20 fso50 ideal
+Torus,2-D	3.35	3.57	3.45	2.96
+Torus,4-D 	2.96	3.39	2.21	2.80
+Torus,5-D 	2.80	2.76	3.51	2.73

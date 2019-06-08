@@ -1,0 +1,6 @@
+#fsolinkspernode sub3d/host4d sub4d/host4d sub3d/host5d sub5d/host5d
+0	4.42	4.49	4.54	4.62
+0.2 	""	""	4.52	4.57
+0.25	4.31	4.38
+0.5	4.20	4.23	4.44	4.48
+1.0	4.15	4.15	4.40	4.40

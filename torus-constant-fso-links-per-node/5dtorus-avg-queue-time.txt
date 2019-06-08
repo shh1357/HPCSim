@@ -1,0 +1,6 @@
+#fsolinkspernode queuetime
+0	116.35
+2 	91.56
+5 	76.59
+8 	67.98	
+10	44.44

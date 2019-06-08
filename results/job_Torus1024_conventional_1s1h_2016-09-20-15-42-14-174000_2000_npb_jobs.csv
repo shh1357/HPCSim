@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+0.364920000315,0.720550800315,1.70816892035,2000,Torus1024_conventional_1s1h,connected,0,1024,2000,1.0,backfilling,111.035000086,1024,2016-09-20-15-42-14-174000_2000_npb_jobs

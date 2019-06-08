@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+165.071653199,178.920845119,5.07251144678,891,Torus1024_conventional_1s1h,connected,0,1024,1000,0.001,backfilling,646.601999998,1024,CEA-Curie-2011-2.1-cln.swf

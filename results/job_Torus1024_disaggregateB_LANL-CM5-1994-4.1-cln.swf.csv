@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+1.11464407525,1.30258674594,2.67725666717,1992,Torus1024_disaggregateB,connected,8,1024,2000,0.0001,backfilling,71.7409999371,250,LANL-CM5-1994-4.1-cln.swf

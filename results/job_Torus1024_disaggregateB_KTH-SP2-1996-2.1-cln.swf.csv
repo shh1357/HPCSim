@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+0.00279300010204,0.520148300102,1.00009524981,2000,Torus1024_disaggregateB,connected,0,1024,2000,0.0001,backfilling,209.494000196,250,KTH-SP2-1996-2.1-cln.swf

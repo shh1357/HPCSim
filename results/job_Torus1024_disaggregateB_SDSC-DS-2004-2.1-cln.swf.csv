@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+1.40205940067,2.13870248161,1.63210602174,1532,Torus1024_disaggregateB,connected,107,1024,2000,0.0001,backfilling,86.9709999561,250,SDSC-DS-2004-2.1-cln.swf

@@ -1,0 +1,6 @@
+#fsolinkspernode withoutspeedup withspeedup
+0	322.41	219.42	
+2 	323.51	214.03	
+5 	316.64	214.77	
+8 	312.11	201.71	
+10	279.41	182.63
