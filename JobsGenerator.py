@@ -14,7 +14,7 @@ def generate_n_jobs(n, makespan):
     dt = dt.replace(" ", "-")
     dt = dt.replace(".", "-")
     dt = dt.replace(":", "-")
-    fn = dt + "_" + str(n) + "_jobs"
+    fn = "workloads/" + dt + "_" + str(n) + "_jobs"
     f = open(fn, "w")  
     f.write(";job_number  cpu#  ssd#  gpu#  submit  runtime\n")   
     submits = []
@@ -45,7 +45,7 @@ def generate_jobs(makespan):
         dt = dt.replace(" ", "-")
         dt = dt.replace(".", "-")
         dt = dt.replace(":", "-")
-        fn = dt + "_" + str(n) + "_jobs"
+        fn = "workloads/" + dt + "_" + str(n) + "_jobs"
         f = open(fn, "w")  
         f.write(";job_number  cpu#  ssd#  gpu#  submit  runtime\n")    
         for i in range(2000):
@@ -78,7 +78,7 @@ def generate_jobs_poisson(makespan):
         dt = dt.replace(" ", "-")
         dt = dt.replace(".", "-")
         dt = dt.replace(":", "-")
-        fn = dt + "_" + str(n) + "_jobs_poisson"
+        fn = "workloads/" + dt + "_" + str(n) + "_jobs_poisson"
         f = open(fn, "w")  
         f.write(";job_number  cpu#  ssd#  gpu#  submit  runtime\n") 
         time = 0.0   

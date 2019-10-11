@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+0.022111768007278442,0.08432376800727855,1.236665921741253,1000,,connected,0,1024,1000,0.0001,backfilling,72.84012794494629,0,NASA-iPSC-1993-3.1-cln.swf

@@ -20,6 +20,8 @@ speedup = "no"
 backfilling = "no"
 arch = "RS"
 fso_cpu_ssdgpu = 0
+mapping_policy = "diameter-based"
+num_jobs = 0
 
 # Create a new frame class, derived from the wxPython Frame.
 class MyFrame(wx.Frame):
@@ -39,50 +41,56 @@ class MyFrame(wx.Frame):
         label7 = wx.StaticText(panel, -1, "architecture: ")
         label6 = wx.StaticText(panel, -1, "speedup: ")
         label4 = wx.StaticText(panel, -1, "topology: ")
-#151222         label1 = wx.StaticText(panel, -1, "side length of a grid: ")
+        label1 = wx.StaticText(panel, -1, "side length of a grid: ")
         label2 = wx.StaticText(panel, -1, "scheduling: ")
         label3 = wx.StaticText(panel, -1, "Mode: ")
-#151222         self.sizeCtrl = wx.TextCtrl(panel, -1, "5")
+        self.sizeCtrl = wx.TextCtrl(panel, -1, "5")
 #         self.posCtrl = wx.TextCtrl(panel, -1, "", style=wx.TE_READONLY)
-        label5 = wx.StaticText(panel, -1, "percent (%) of fso links: ")
+        label5 = wx.StaticText(panel, -1, "(FSO_random) percent (%) of fso links: ")
         self.fso_ratio = wx.TextCtrl(panel, -1, "100")
         
-        label8 = wx.StaticText(panel, -1, "fso terminals per node (cpu-ssd/gpu): ")
-        self.cpu_ssdgpu = wx.TextCtrl(panel, -1, "0")        
+        label8 = wx.StaticText(panel, -1, "(IRS-REPEAT) fso terminals per node (cpu-ssd/gpu): ")
+        self.cpu_ssdgpu = wx.TextCtrl(panel, -1, "0")  
+        
+        label9 = wx.StaticText(panel, -1, "(random_contiguous_loose) mapping policy: ")      
+        
+        label10 = wx.StaticText(panel, -1, "(default all) number of jobs: ")   
+        self.jobs = wx.TextCtrl(panel, -1, "0") 
 
         button_set = wx.Button(panel, 1, "Set")
         self.Bind(wx.EVT_BUTTON, self.OnSet, id=1)
         
         radio1 = wx.RadioButton(panel, -1, "FIFO", style=wx.RB_GROUP)  
-#160908         radio4 = wx.RadioButton(panel, -1, "LIFO")
-#         radio2 = wx.RadioButton(panel, -1, "BF")
-#         radio3 = wx.RadioButton(panel, -1, "SF")
-#         radio5 = wx.RadioButton(panel, -1, "RLF")
-#         radio6 = wx.RadioButton(panel, -1, "RSF")        
-#         for eachRadio in [radio1, radio2, radio3, radio4, radio5, radio6]: 
-#             self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio, eachRadio)
+        radio4 = wx.RadioButton(panel, -1, "LIFO")
+        radio2 = wx.RadioButton(panel, -1, "BF")
+        radio3 = wx.RadioButton(panel, -1, "SF")
+        radio5 = wx.RadioButton(panel, -1, "RLF")
+        radio6 = wx.RadioButton(panel, -1, "RSF")        
+        for eachRadio in [radio1, radio2, radio3, radio4, radio5, radio6]: 
+            self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio, eachRadio)
             
         radio01 = wx.RadioButton(panel, 1, "normal", style=wx.RB_GROUP)  
         radio02 = wx.RadioButton(panel, 1, "FSO")
         radio03 = wx.RadioButton(panel, 1, "FSO_random")
         radio04 = wx.RadioButton(panel, 1, "random_contiguous")
         radio05 = wx.RadioButton(panel, 1, "random_non_contiguous") 
-        radio06 = wx.RadioButton(panel, 1, "disaggregate_contiguous")       
-        for eachRadio in [radio01, radio02, radio03, radio04, radio05, radio06]: 
+        radio06 = wx.RadioButton(panel, 1, "disaggregate_contiguous")  
+        radio07 = wx.RadioButton(panel, 1, "random_contiguous_loose")              
+        for eachRadio in [radio01, radio02, radio03, radio04, radio05, radio06, radio07]: 
             self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio0, eachRadio)
             
 #151222         radio001 = wx.RadioButton(panel, 2, "grid", style=wx.RB_GROUP)  
         radio002 = wx.RadioButton(panel, 2, "3-torus", style=wx.RB_GROUP)
 #         radio003 = wx.RadioButton(panel, 2, "3-torus")
-#         radio004 = wx.RadioButton(panel, 2, "4-torus")
-#         radio005 = wx.RadioButton(panel, 2, "5-torus")
+        radio004 = wx.RadioButton(panel, 2, "4-torus")
+        radio005 = wx.RadioButton(panel, 2, "5-torus")
         radio006 = wx.RadioButton(panel, 2, "random")
         radio007 = wx.RadioButton(panel, 2, "random-regular")
         radio008 = wx.RadioButton(panel, 2, "edge-list")
 #         for eachRadio in [radio002, radio003, radio004, radio005]: 
 #             self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio00, eachRadio)
 #160908         radio003 = wx.RadioButton(panel, 2, "fat-tree")
-        for eachRadio in [radio002, radio006, radio007, radio008]: 
+        for eachRadio in [radio002, radio004, radio005, radio006, radio007, radio008]: 
             self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio00, eachRadio)
             
         radio0001 = wx.RadioButton(panel, 3, "no", style=wx.RB_GROUP)
@@ -102,62 +110,107 @@ class MyFrame(wx.Frame):
         for eachRadio in [radio00001, radio00002, radio00003]: 
             self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio0000, eachRadio)  
 
+        radio000001 = wx.RadioButton(panel, 5, "diameter-based", style=wx.RB_GROUP)
+        radio000002 = wx.RadioButton(panel, 5, "aspl-based")
+        for eachRadio in [radio000001, radio000002]: 
+            self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio00000, eachRadio)  
+
         self.panel = panel
 
         # Use some sizers for layout of the widgets
         #sizer = wx.FlexGridSizer(2, 2, 5, 5)
         
-        sizer=wx.BoxSizer(wx.VERTICAL)   
+        sizer0 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer1 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer3 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer4 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer5 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer6 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer7 = wx.BoxSizer(wx.HORIZONTAL)        
+        sizer8 = wx.BoxSizer(wx.HORIZONTAL) 
+        sizer9 = wx.BoxSizer(wx.HORIZONTAL)    
+        sizer10 = wx.BoxSizer(wx.HORIZONTAL)             
         
-        sizer.Add(label4, 0, wx.ALL|wx.EXPAND, 5)
-#151222         sizer.Add(radio001, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio002, 0, wx.ALL|wx.EXPAND, 5)
-#160908         sizer.Add(radio003, 0, wx.ALL|wx.EXPAND, 5)
-#         sizer.Add(radio004, 0, wx.ALL|wx.EXPAND, 5)
-#         sizer.Add(radio005, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio006, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio007, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio008, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)
-#151222         sizer.Add(label1, 0, wx.ALL|wx.EXPAND, 5)
-#151222         sizer.Add(self.sizeCtrl, 0, wx.ALL|wx.EXPAND, 5)
+        sizer=wx.BoxSizer(wx.VERTICAL)   
+
+        sizer0.Add(label1, 0, wx.ALL|wx.EXPAND, 5)
+        sizer0.Add(self.sizeCtrl, 0, wx.ALL|wx.EXPAND, 5)
 #151222         sizer.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)
-        sizer.Add(label7, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio00001, 0, wx.ALL|wx.EXPAND, 5)
-#huyao 180730         sizer.Add(radio00002, 0, wx.ALL|wx.EXPAND, 5)
-#huyao 180730         sizer.Add(radio00003, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)
-        sizer.Add(label2, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio1, 0, wx.ALL|wx.EXPAND, 5)
-#160908         sizer.Add(radio4, 0, wx.ALL|wx.EXPAND, 5)
-#         sizer.Add(radio2, 0, wx.ALL|wx.EXPAND, 5)
-#         sizer.Add(radio3, 0, wx.ALL|wx.EXPAND, 5)
-#         sizer.Add(radio5, 0, wx.ALL|wx.EXPAND, 5)
-#         sizer.Add(radio6, 0, wx.ALL|wx.EXPAND, 5)        
-        sizer.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)
-        sizer.Add(label6, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio0001, 0, wx.ALL|wx.EXPAND, 5)
-#huyao 180730         sizer.Add(radio0002, 0, wx.ALL|wx.EXPAND, 5)   
-#huyao 180730         sizer.Add(radio0003, 0, wx.ALL|wx.EXPAND, 5) 
-#huyao 180730         sizer.Add(radio0004, 0, wx.ALL|wx.EXPAND, 5) 
-        sizer.Add(radio0005, 0, wx.ALL|wx.EXPAND, 5) 
-        sizer.Add(radio0006, 0, wx.ALL|wx.EXPAND, 5)   
-#huyao 180730         sizer.Add(radio0007, 0, wx.ALL|wx.EXPAND, 5) 
-        sizer.Add(radio0008, 0, wx.ALL|wx.EXPAND, 5)               
-        sizer.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)     
-        sizer.Add(label3, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio01, 0, wx.ALL|wx.EXPAND, 5)
-#huyao 180730         sizer.Add(radio02, 0, wx.ALL|wx.EXPAND, 5)
-#huyao 180730         sizer.Add(radio03, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio04, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio05, 0, wx.ALL|wx.EXPAND, 5)
-#huyao 180730         sizer.Add(label5, 0, wx.ALL|wx.EXPAND, 5)
-#huyao 180730         sizer.Add(self.fso_ratio, 0, wx.ALL|wx.EXPAND, 5)
-#huyao 180730         sizer.Add(label8, 0, wx.ALL|wx.EXPAND, 5)
-#huyao 180730         sizer.Add(self.cpu_ssdgpu, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(radio06, 0, wx.ALL|wx.EXPAND, 5)
-        sizer.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)        
-        sizer.Add(button_set, 0, wx.ALL|wx.EXPAND, 5)
+        
+        sizer1.Add(label4, 0, wx.ALL|wx.EXPAND, 5)
+#151222         sizer.Add(radio001, 0, wx.ALL|wx.EXPAND, 5)
+        sizer1.Add(radio002, 0, wx.ALL|wx.EXPAND, 5)
+#160908         sizer.Add(radio003, 0, wx.ALL|wx.EXPAND, 5)
+        sizer1.Add(radio004, 0, wx.ALL|wx.EXPAND, 5)
+        sizer1.Add(radio005, 0, wx.ALL|wx.EXPAND, 5)
+        sizer1.Add(radio006, 0, wx.ALL|wx.EXPAND, 5)
+        sizer1.Add(radio007, 0, wx.ALL|wx.EXPAND, 5)
+        sizer1.Add(radio008, 0, wx.ALL|wx.EXPAND, 5)
+        #sizer1.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)
+
+        sizer2.Add(label7, 0, wx.ALL|wx.EXPAND, 5)
+        sizer2.Add(radio00001, 0, wx.ALL|wx.EXPAND, 5)
+        sizer2.Add(radio00002, 0, wx.ALL|wx.EXPAND, 5)
+        sizer2.Add(radio00003, 0, wx.ALL|wx.EXPAND, 5)
+        #sizer2.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)
+        
+        sizer3.Add(label2, 0, wx.ALL|wx.EXPAND, 5)
+        sizer3.Add(radio1, 0, wx.ALL|wx.EXPAND, 5)
+        sizer3.Add(radio4, 0, wx.ALL|wx.EXPAND, 5)
+        sizer3.Add(radio2, 0, wx.ALL|wx.EXPAND, 5)
+        sizer3.Add(radio3, 0, wx.ALL|wx.EXPAND, 5)
+        sizer3.Add(radio5, 0, wx.ALL|wx.EXPAND, 5)
+        sizer3.Add(radio6, 0, wx.ALL|wx.EXPAND, 5)        
+        #sizer3.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)
+        
+        sizer4.Add(label6, 0, wx.ALL|wx.EXPAND, 5)
+        sizer4.Add(radio0001, 0, wx.ALL|wx.EXPAND, 5)
+        sizer4.Add(radio0002, 0, wx.ALL|wx.EXPAND, 5)   
+        sizer4.Add(radio0003, 0, wx.ALL|wx.EXPAND, 5) 
+        sizer4.Add(radio0004, 0, wx.ALL|wx.EXPAND, 5) 
+        sizer4.Add(radio0005, 0, wx.ALL|wx.EXPAND, 5) 
+        sizer4.Add(radio0006, 0, wx.ALL|wx.EXPAND, 5)   
+        sizer4.Add(radio0007, 0, wx.ALL|wx.EXPAND, 5) 
+        sizer4.Add(radio0008, 0, wx.ALL|wx.EXPAND, 5)               
+        #sizer4.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)    
+         
+        sizer5.Add(label3, 0, wx.ALL|wx.EXPAND, 5)
+        sizer5.Add(radio01, 0, wx.ALL|wx.EXPAND, 5)
+        sizer5.Add(radio02, 0, wx.ALL|wx.EXPAND, 5)
+        sizer5.Add(radio03, 0, wx.ALL|wx.EXPAND, 5)
+        sizer5.Add(radio04, 0, wx.ALL|wx.EXPAND, 5)
+        sizer5.Add(radio05, 0, wx.ALL|wx.EXPAND, 5)
+        sizer5.Add(radio06, 0, wx.ALL|wx.EXPAND, 5)
+        sizer5.Add(radio07, 0, wx.ALL|wx.EXPAND, 5)
+        #sizer5.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)    
+        
+        sizer6.Add(label5, 0, wx.ALL|wx.EXPAND, 5)
+        sizer6.Add(self.fso_ratio, 0, wx.ALL|wx.EXPAND, 5)
+        
+        sizer7.Add(label8, 0, wx.ALL|wx.EXPAND, 5)
+        sizer7.Add(self.cpu_ssdgpu, 0, wx.ALL|wx.EXPAND, 5) 
+        
+        sizer9.Add(label9, 0, wx.ALL|wx.EXPAND, 5)
+        sizer9.Add(radio000001, 0, wx.ALL|wx.EXPAND, 5)
+        sizer9.Add(radio000002, 0, wx.ALL|wx.EXPAND, 5)                
+
+        sizer10.Add(label10, 0, wx.ALL|wx.EXPAND, 5)  
+        sizer10.Add(self.jobs, 0, wx.ALL|wx.EXPAND, 5) 
+            
+        sizer8.Add(button_set, 0, wx.ALL|wx.EXPAND, 5)    
+        
+        sizer.Add(sizer0, 0, wx.ALL|wx.EXPAND, 5) 
+        sizer.Add(sizer1, 0, wx.ALL|wx.EXPAND, 5)
+        sizer.Add(sizer2, 0, wx.ALL|wx.EXPAND, 5)
+        sizer.Add(sizer3, 0, wx.ALL|wx.EXPAND, 5)
+        sizer.Add(sizer4, 0, wx.ALL|wx.EXPAND, 5)
+        sizer.Add(sizer5, 0, wx.ALL|wx.EXPAND, 5)
+        sizer.Add(sizer6, 0, wx.ALL|wx.EXPAND, 5)
+        sizer.Add(sizer7, 0, wx.ALL|wx.EXPAND, 5)        
+        sizer.Add(sizer9, 0, wx.ALL|wx.EXPAND, 5) 
+        sizer.Add(sizer10, 0, wx.ALL|wx.EXPAND, 5) 
+        sizer.Add(sizer8, 0, wx.ALL|wx.EXPAND, 5) 
 
 #         panel.SetAutoLayout(True)
         panel.SetSizerAndFit(sizer)
@@ -183,11 +236,12 @@ class MyFrame(wx.Frame):
 #         self.posCtrl.SetValue("%s, %s" % (pos.x, pos.y))
 
     def OnSet(self, event):
-        global xxxx, yyyy, fso_r, fso_cpu_ssdgpu
-#         xxxx = int(self.sizeCtrl.GetValue())
-#         yyyy = int(self.sizeCtrl.GetValue())
+        global xxxx, yyyy, fso_r, fso_cpu_ssdgpu, num_jobs
+        xxxx = int(self.sizeCtrl.GetValue())
+        yyyy = int(self.sizeCtrl.GetValue())
         fso_r = int(self.fso_ratio.GetValue())/100.0
         fso_cpu_ssdgpu = int(self.cpu_ssdgpu.GetValue())
+        num_jobs = int(self.jobs.GetValue())
         self.Close()
         
         
@@ -217,6 +271,11 @@ class MyFrame(wx.Frame):
         radioSelected = event.GetEventObject()  
         arch = radioSelected.GetLabel() 
 
+    def OnRadio00000(self, event):  
+        global mapping_policy
+        radioSelected = event.GetEventObject()  
+        mapping_policy = radioSelected.GetLabel() 
+
 # Every wxWidgets application must have a class derived from wx.App
 class MyApp(wx.App):
 
@@ -224,7 +283,7 @@ class MyApp(wx.App):
     def OnInit(self):
 
         # Create an instance of our customized Frame class
-        frame = MyFrame(None, -1, "This is a simple test")
+        frame = MyFrame(None, -1, "Job Scheduler")
         frame.Center()
         frame.Show(True)
 

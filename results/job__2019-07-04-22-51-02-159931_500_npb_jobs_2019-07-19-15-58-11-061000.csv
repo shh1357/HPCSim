@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+40.4459300056,40.8107804056,66.8204164202,500,,connected,0,1024,500,1.0,backfilling,203.56099987,0,2019-07-04-22-51-02-159931_500_npb_jobs

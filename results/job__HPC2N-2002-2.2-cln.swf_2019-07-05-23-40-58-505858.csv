@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+0.05743962526321411,1.0970430252632148,1.0113642862120311,1000,,connected,0,1024,1000,0.0001,backfilling,226.66659688949585,0,HPC2N-2002-2.2-cln.swf

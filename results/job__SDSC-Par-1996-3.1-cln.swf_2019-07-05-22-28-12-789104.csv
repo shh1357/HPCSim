@@ -1,0 +1,2 @@
+avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+0.11709143924713135,1.1204633392471313,1.0381566716440147,1000,,connected,0,1024,1000,0.0001,backfilling,194.4894871711731,0,SDSC-Par-1996-3.1-cln.swf

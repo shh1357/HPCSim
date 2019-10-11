@@ -19,8 +19,7 @@ from networkx.algorithms.components.connected import is_connected
 #import random
 import copy
 import math
-from networkx.algorithms.shortest_paths.weighted import dijkstra_path_length
-from pickle import FALSE
+#from networkx.algorithms.shortest_paths.weighted import dijkstra_path_length
 
 
 app = GUI.MyApp(0)     # Create an instance of the application class

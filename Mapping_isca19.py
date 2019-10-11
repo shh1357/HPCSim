@@ -3,7 +3,7 @@ Created on 2018/11/09
 
 @author: huyao
 '''
-from lib2to3.pgen2.token import STAR
+
 '''
 Created on 2018/07/29
 
