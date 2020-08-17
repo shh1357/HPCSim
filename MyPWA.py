@@ -27,12 +27,12 @@ import pandas as pd
 # archive = "workloads/HPC2N-2002-2.2-cln.swf"
 # archive = "workloads/METACENTRUM-2009-2.swf"
 
-# archive = "workloads/wagap1-10-2013.swf" #cerit13 CERIT-SC_2013
+archive = "workloads/wagap1-10-2013.swf" #cerit13 CERIT-SC_2013
 # archive = "workloads/meta1-6-2013.swf" #meta13 MetaCentrum_2013
 # archive = "workloads/RICC-2010-2.swf"
 # archive = "workloads/CEA-Curie-2011-2.1-clncln.swf"
 # archive = "workloads/ANL-Intrepid-2009-1.swf" 
-archive = "workloads/METACENTRUM-2013-3.swf" 
+# archive = "workloads/METACENTRUM-2013-3.swf" 
 
 #archive = "workloads/2016-05-22-21-53-28-336000_200_jobs"
 #archive = "workloads/2016-05-22-21-53-28-422000_2000_jobs"
@@ -200,5 +200,5 @@ def cdf_nodes(t):
 # print columns
 #print data[columns].mean(axis=0)
 
-print num
-cdf_nodes(num)
+# print num
+# cdf_nodes(num)
