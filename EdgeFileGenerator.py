@@ -35,14 +35,14 @@ def generate_edge_file(sws, ports, nodes, racks):
     #check sw port
     sw_port = [0] * node_num_begin
     with open(fn, "r") as f:
-        f.readline()
-        line = f.readline().split(" ")
-        left = int(line[0])
-        right = int(line[1].replace('\n',''))
-        if left < node_num_begin:
-            sw_port[left] += 1
-        if right < node_num_begin:
-            sw_port[right] += 1
+        lines = f.readlines()[1:]
+        for line in lines: 
+            left = int(line.split(" ")[0])
+            right = int(line.split(" ")[1].replace('\n',''))
+            if left < node_num_begin:
+                sw_port[left] += 1
+            if right < node_num_begin:
+                sw_port[right] += 1
     for i in range(node_num_begin):
         print i, ": ", sw_port[i]
 
