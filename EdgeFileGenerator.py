@@ -8,8 +8,14 @@ Created on 2020/08/17
 def generate_edge_file(sws, ports, nodes, racks):
     fn = "edges/cpo_s" + str(sws) + "_p" + str(ports) + "_n" + str(nodes) + "_r" + str(racks) + ".edge"
     racks_in_group = ports/2 #racks_in_group == nodes_in_group
-    rack_groups = racks/racks_in_group
-    node_groups = nodes/racks_in_group
+    if racks%racks_in_group != 0 or nodes%racks_in_group != 0: 
+        print "check input (ports, nodes, racks)"
+        return
+    rack_groups = racks/racks_in_group #require racks%racks_in_group == 0
+    node_groups = nodes/racks_in_group #require nodes%racks_in_group == 0
+    if sws%rack_groups != 0 or sws%node_groups != 0: 
+        print "check input (sws)"
+        return    
     node_num_begin = sws*racks
     with open(fn, "w") as f:
         f.write("# 0-" + str(node_num_begin-1) + ": switches, " + str(node_num_begin) + "-: hosts\n")
@@ -17,13 +23,16 @@ def generate_edge_file(sws, ports, nodes, racks):
             rack = sw/sws
             rack_group = rack/racks_in_group
             sw_num = sw%sws
-            sw_group_by_rack = sw_num/(sws/rack_groups) #sw_groups == rack_groups, sw_group <-> link rack_group
-            sw_group_by_node = sw_num/(sws/node_groups) #sw_groups == node_groups, sw_group <-> link node_group
+            sw_group_by_rack = sw_num/(sws/rack_groups) #sw_groups == rack_groups, sw_group <-> link rack_group #require sws%rack_groups == 0
+            sw_group_by_node = sw_num/(sws/node_groups) #sw_groups == node_groups, sw_group <-> link node_group #require sws%node_groups == 0
             #inter-rack sw-sw
             rack_begin = racks_in_group * sw_group_by_rack
             rack_end = rack_begin + racks_in_group 
-            for rack_link in range(rack+1, rack_end):
-                sw_link = rack_link * sws + sw_num
+            rack_link_begin = rack_begin if rack_begin > rack else rack + 1 #avoid duplex links
+            rack_link_end = rack_end
+            for rack_link in range(rack_link_begin, rack_link_end):
+                #sw_link = rack_link * sws + sw_num
+                sw_link = rack_link * sws + rack_group * (sws/rack_groups) + sw_num%(sws/rack_groups) #rack offset + sw_group offset + sw offset
                 f.write(str(sw) + " " + str(sw_link) + "\n")
             #intra-rack sw-node
             node_begin = node_num_begin + rack * nodes
@@ -32,6 +41,10 @@ def generate_edge_file(sws, ports, nodes, racks):
             node_link_end = node_begin + racks_in_group * sw_group_by_node + racks_in_group
             for node_link in range(node_link_begin, node_link_end):
                 f.write(str(sw) + " " + str(node_link) + "\n")
+    print "racks_in_group: ", racks_in_group
+    print "rack_groups: ", rack_groups
+    print "node_groups: ", node_groups
+    print "node_num_begin: ", node_num_begin
     #check sw port
     sw_port = [0] * node_num_begin
     with open(fn, "r") as f:
@@ -47,3 +60,4 @@ def generate_edge_file(sws, ports, nodes, racks):
         print i, ": ", sw_port[i]
 
 generate_edge_file(4, 64, 64, 64)
+generate_edge_file(4, 128, 64, 128)
