@@ -44,8 +44,8 @@ def generate_edge_file(sws, ports, nodes, racks):
                 f.write(str(sw) + " " + str(node_link) + "\n")
             #intra-rack sw-sw    
             if sw_group_by_rack == rack_group:
-                if sw_num < sws/2:
-                    f.write(str(sw) + " " + str(sws-sw-1) + "\n")
+                if sw_num%(sws/rack_groups) < sws/rack_groups/2:
+                    f.write(str(sw) + " " + str(sw-sw_num%(sws/rack_groups)+sws/rack_groups-1-sw_num%(sws/rack_groups)) + "\n")
     print "racks_in_group: ", racks_in_group
     print "rack_groups: ", rack_groups
     print "node_groups: ", node_groups

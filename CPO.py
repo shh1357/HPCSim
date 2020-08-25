@@ -190,7 +190,9 @@ if(GUI.topo == "edge-list"):
         RG.node[node]["ssd"] = 0
         RG.node[node]["gpu"] = 0
         RG.node[node]["jobs"] = []  
-    tn = 1024 # hosts
+#     tn = 1024 # hosts
+    tn = RG.number_of_nodes() - host_start
+
 # print nx.is_connected(RG)
 # print nx.number_connected_components(RG)
 # print nx.connected_components(RG)
