@@ -9,7 +9,7 @@ import pandas as pd
 
 #print os.getcwd()
 
-# archive = "workloads/CEA-Curie-2011-2.1-cln.swf"
+archive = "workloads/CEA-Curie-2011-2.1-cln.swf"
 # archive = "workloads/LLNL-Thunder-2007-1.1-cln.swf"
 # archive = "workloads/LLNL-Atlas-2006-2.1-cln.swf"
 # archive = "workloads/LPC-EGEE-2004-1.2-cln.swf"
@@ -27,7 +27,7 @@ import pandas as pd
 # archive = "workloads/HPC2N-2002-2.2-cln.swf"
 # archive = "workloads/METACENTRUM-2009-2.swf"
 
-archive = "workloads/wagap1-10-2013.swf" #cerit13 CERIT-SC_2013
+# archive = "workloads/wagap1-10-2013.swf" #cerit13 CERIT-SC_2013
 # archive = "workloads/meta1-6-2013.swf" #meta13 MetaCentrum_2013
 # archive = "workloads/RICC-2010-2.swf"
 # archive = "workloads/CEA-Curie-2011-2.1-clncln.swf"
@@ -69,8 +69,8 @@ archive = "workloads/wagap1-10-2013.swf" #cerit13 CERIT-SC_2013
 #archive = "workloads/2019-07-03-16-05-54-369066_1000_npb_jobs"
 #archive = "workloads/2019-07-03-16-05-54-380715_2000_npb_jobs"
 
-edgelist = ""
-#edgelist = "edges/Torus1024_conventional"
+edgelist = "edges/cpo_s4_p64_n64_r64.edge"
+# edgelist = "edges/Torus1024_conventional"
 #edgelist = "edges/Torus1024_disaggregateA"
 #edgelist = "edges/Torus1024_disaggregateB"
 #edgelist = "edges/Torus1024_disaggregateC"

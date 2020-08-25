@@ -261,8 +261,8 @@ if(MyPWA.archive.split(".")[-1] == "swf"):
     data = MyPWA.pwa_data
 
 num_jobs = len(data)
-# if num_jobs > 1000:
-#     num_jobs = 1000
+if num_jobs > 1000:
+    num_jobs = 1000
 if GUI.num_jobs > 0:
     num_jobs = GUI.num_jobs
 for i in range(num_jobs):
