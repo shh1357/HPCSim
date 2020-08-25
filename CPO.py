@@ -191,6 +191,13 @@ if(GUI.topo == "edge-list"):
         RG.node[node]["gpu"] = 0
         RG.node[node]["jobs"] = []  
     tn = 1024 # hosts
+# print nx.is_connected(RG)
+# print nx.number_connected_components(RG)
+# print nx.connected_components(RG)
+# print nx.node_connected_component(RG, 0)
+# print len(nx.node_connected_component(RG, 0))
+# print nx.node_connected_component(RG, 1)
+# print len(nx.node_connected_component(RG, 1))
 
 fso_cpu_ssdgpu = GUI.fso_cpu_ssdgpu
 cpu_ssdgpu_improved_by_fso = 0

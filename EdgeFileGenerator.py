@@ -12,8 +12,8 @@ def generate_edge_file(sws, ports, nodes, racks):
         print "check input (ports, nodes, racks)"
         return
     rack_groups = racks/racks_in_group #require racks%racks_in_group == 0
-    node_groups = nodes/racks_in_group #require nodes%racks_in_group == 0
-    if sws%rack_groups != 0 or sws%node_groups != 0: 
+    node_groups = nodes/racks_in_group #require nodes%racks_in_group == 0  
+    if sws%rack_groups != 0 or (sws/rack_groups)%node_groups != 0: #or sws%node_groups != 0
         print "check input (sws)"
         return    
     node_num_begin = sws*racks
@@ -24,7 +24,8 @@ def generate_edge_file(sws, ports, nodes, racks):
             rack_group = rack/racks_in_group
             sw_num = sw%sws
             sw_group_by_rack = sw_num/(sws/rack_groups) #sw_groups == rack_groups, sw_group <-> link rack_group #require sws%rack_groups == 0
-            sw_group_by_node = sw_num/(sws/node_groups) #sw_groups == node_groups, sw_group <-> link node_group #require sws%node_groups == 0
+#             sw_group_by_node = sw_num/(sws/node_groups) #sw_groups == node_groups, sw_group <-> link node_group #require sws%node_groups == 0
+            sw_group_by_node = sw_num%node_groups #sw_groups == node_groups, sw <-> link node_group #require (sws/rack_groups)%node_groups == 0
             #inter-rack sw-sw
             rack_begin = racks_in_group * sw_group_by_rack
             rack_end = rack_begin + racks_in_group 
@@ -38,9 +39,13 @@ def generate_edge_file(sws, ports, nodes, racks):
             node_begin = node_num_begin + rack * nodes
             node_end = node_begin + nodes
             node_link_begin = node_begin + racks_in_group * sw_group_by_node
-            node_link_end = node_begin + racks_in_group * sw_group_by_node + racks_in_group
+            node_link_end = node_link_begin + racks_in_group
             for node_link in range(node_link_begin, node_link_end):
                 f.write(str(sw) + " " + str(node_link) + "\n")
+            #intra-rack sw-sw    
+            if sw_group_by_rack == rack_group:
+                if sw_num < sws/2:
+                    f.write(str(sw) + " " + str(sws-sw-1) + "\n")
     print "racks_in_group: ", racks_in_group
     print "rack_groups: ", rack_groups
     print "node_groups: ", node_groups
