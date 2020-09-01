@@ -9,7 +9,7 @@ import pandas as pd
 
 #print os.getcwd()
 
-archive = "workloads/CEA-Curie-2011-2.1-cln.swf"
+# archive = "workloads/CEA-Curie-2011-2.1-cln.swf"
 # archive = "workloads/LLNL-Thunder-2007-1.1-cln.swf"
 # archive = "workloads/LLNL-Atlas-2006-2.1-cln.swf"
 # archive = "workloads/LPC-EGEE-2004-1.2-cln.swf"
@@ -33,6 +33,7 @@ archive = "workloads/CEA-Curie-2011-2.1-cln.swf"
 # archive = "workloads/CEA-Curie-2011-2.1-clncln.swf"
 # archive = "workloads/ANL-Intrepid-2009-1.swf" 
 # archive = "workloads/METACENTRUM-2013-3.swf" 
+archive = "workloads/UniLu-Gaia-2014-2.swf"
 
 #archive = "workloads/2016-05-22-21-53-28-336000_200_jobs"
 #archive = "workloads/2016-05-22-21-53-28-422000_2000_jobs"
@@ -69,7 +70,6 @@ archive = "workloads/CEA-Curie-2011-2.1-cln.swf"
 #archive = "workloads/2019-07-03-16-05-54-369066_1000_npb_jobs"
 #archive = "workloads/2019-07-03-16-05-54-380715_2000_npb_jobs"
 
-edgelist = "edges/cpo_s4_p64_n64_r64.edge"
 # edgelist = "edges/Torus1024_conventional"
 #edgelist = "edges/Torus1024_disaggregateA"
 #edgelist = "edges/Torus1024_disaggregateB"
@@ -78,6 +78,8 @@ edgelist = "edges/cpo_s4_p64_n64_r64.edge"
 #edgelist = "edges/Torus1024_conventional_1s1h"
 #edgelist = "edges/Torus1024_disaggregateB_1s1h"
 #edgelist = "edges/Torus1024_disaggregateC_1s1h"
+# edgelist = "edges/cpo_s4_p64_n64_r64.edge"
+edgelist = "edges/cpo_s4_p128_n64_r128.edge"
 
 # names = ["job_number", 
 #          "cpu#", 
