@@ -1837,7 +1837,12 @@ def output_queue_time(fn, dt):
     
     f.close()
     
-    dataframe = pd.DataFrame({'jobs': [num_jobs], 'dispatched jobs': [num], 'avg_queue_time':  [avg_queue_time], 'avg_response_time': [avg_response_time], 'avg_slowdown': [avg_slowdown], 'switches': [host_start], 'hosts': [tn], 'scheduling': ["backfilling"], 'embedding': ["connected"], 'edgelist': [MyPWA.edgelist.split("/")[-1]], 'workload': [MyPWA.archive.split("/")[-1]], 'scale': [1/k], 'simulation time': [end-start], 'failed jobs': [len(failed_jobs)]})
+    avg_node = 0
+    for i in range(num_jobs):
+        avg_node += jobs_cpus[i]
+    avg_node /= num_jobs
+    
+    dataframe = pd.DataFrame({'jobs': [num_jobs], 'dispatched jobs': [num], 'avg_queue_time':  [avg_queue_time], 'avg_response_time': [avg_response_time], 'avg_slowdown': [avg_slowdown], 'switches': [host_start], 'hosts': [tn], 'scheduling': ["backfilling"], 'embedding': ["connected"], 'edgelist': [MyPWA.edgelist.split("/")[-1]], 'workload': [MyPWA.archive.split("/")[-1]], 'scale': [1/k], 'simulation time': [end-start], 'failed jobs': [len(failed_jobs)], 'avg_node': [avg_node], 'avg_diameter': [avg_diameter], 'avg_aspl': [avg_aspl]})
     dataframe.to_csv("results/job_" + MyPWA.edgelist.split("/")[-1] + "_" + MyPWA.archive.split("/")[-1] + "_" + dt + ".csv", index = False, sep = ',')    
         
 
@@ -1922,11 +1927,22 @@ def dostat():
             f.write("average queuing jobs are: " + str(average_queuingjobs) + "\n")
             f.write("maximum queuing jobs are: " + str(max_queuingjobs) + "\n")
             f.close()
+
+            for job in range(num_jobs):
+                if len(jobs_cpus_nodes[job]) != 0 and len(jobs_cpus_sws[job]) != 0:
+                    switches = list(set(jobs_cpus_sws[job]))
+#                     print "nodes: ", jobs_cpus_nodes[job]
+#                     print "sws: ", jobs_cpus_sws[job]
+#                     print "nodes_sws: ", switches
+                    subgraph = RG.subgraph(switches)
+                    jobs_cpus_diameter[job] = nx.diameter(subgraph)
+                    jobs_cpus_aspl[job] = nx.average_shortest_path_length(subgraph)
+#                     print jobs_cpus_diameter[job], " ", jobs_cpus_aspl[job]
             
             dataframe = pd.DataFrame({'utilization':utilization_cpu, 'queue jobs':queuingjobs})
             dataframe.to_csv("results/system_" + MyPWA.edgelist.split("/")[-1] + "_" + MyPWA.archive.split("/")[-1] + "_" + dt + ".csv", index = True, sep = ',')
             
-            dataframe = pd.DataFrame({"switches": jobs_cpus_sws, "hosts": jobs_cpus_nodes, "number of nodes": jobs_cpus})
+            dataframe = pd.DataFrame({"switches": jobs_cpus_sws, "hosts": jobs_cpus_nodes, "number of nodes": jobs_cpus, "diameter": jobs_cpus_diameter, "aspl": jobs_cpus_aspl})
             dataframe.to_csv("results/mapping_" + MyPWA.edgelist.split("/")[-1] + "_" + MyPWA.archive.split("/")[-1] + "_" + dt + ".csv", index = True, sep = ',')
             
             output_queue_time(fn, dt)
