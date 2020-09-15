@@ -1281,6 +1281,7 @@ def random_non_contiguous():
     global jobs_dispatch, first_num, jobs_cpus, jobs_runtime, jobs_ssds, jobs_gpus, jobs_npb, first_time
     count = 0
     ava_nodes = []    
+    ava_sws = [] #huyao200915
     for node in RG.nodes():
         if RG.node[(node)]["cpu"] > 0:
             count = count + 1
@@ -1346,8 +1347,13 @@ def random_non_contiguous():
                         RG.node[ava_node]["gpu"] = 0
                     mylock.release()
                     n = n + 1
+                    
+                    #huyao200915
+                    for sw in RG.neighbors(ava_node):
+                        ava_sws.append(sw)
                         
                 jobs_cpus_nodes[first_num] = copy.copy(ava_nodes)
+                jobs_cpus_sws[first_num] = copy.copy(ava_sws) #huyao200915
                                            
                 t = threading.Timer(first_time, unlock_unava, (ava_nodes, first,)) #required processing time
                 t.start()
@@ -1935,8 +1941,21 @@ def dostat():
 #                     print "sws: ", jobs_cpus_sws[job]
 #                     print "nodes_sws: ", switches
                     subgraph = RG.subgraph(switches)
-                    jobs_cpus_diameter[job] = nx.diameter(subgraph)
-                    jobs_cpus_aspl[job] = nx.average_shortest_path_length(subgraph)
+                    if nx.is_connected(subgraph):
+                        jobs_cpus_diameter[job] = nx.diameter(subgraph)
+                        jobs_cpus_aspl[job] = nx.average_shortest_path_length(subgraph)
+                    else:
+                        total_path_length = 0
+                        max_path_length = 0  
+                        sw_num = len(switches)                       
+                        for i in range(sw_num-1):
+                            for j in range(i+1, sw_num):
+                                path_length = nx.shortest_path_length(RG, switches[i], switches[j])
+                                if path_length > max_path_length:
+                                    max_path_length = path_length
+                                total_path_length += path_length
+                        jobs_cpus_diameter[job] = max_path_length
+                        jobs_cpus_aspl[job] = total_path_length/(sw_num*(sw_num-1)/2)
 #                     print jobs_cpus_diameter[job], " ", jobs_cpus_aspl[job]
             
             dataframe = pd.DataFrame({'utilization':utilization_cpu, 'queue jobs':queuingjobs})
