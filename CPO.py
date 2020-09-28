@@ -1359,7 +1359,92 @@ def random_non_contiguous():
                 t.start()
                 queue.pop(0)
 #                     fill = 0
-                return         
+                return    
+            
+#huyao 200928
+def map_in_order():   
+    global jobs_dispatch, first_num, jobs_cpus, jobs_runtime, jobs_ssds, jobs_gpus, jobs_npb, first_time
+    count = 0
+    ava_nodes = []    
+    ava_sws = [] #huyao200915
+    for node in range(host_start, host_start+tn):
+        if RG.node[(node)]["cpu"] > 0:
+            count = count + 1
+            ava_nodes.append(node)
+#             print "count:", count
+#             print "first_cpu:", first_cpu
+            if count == first_cpu:
+                print datetime.datetime.now(), "job: ", first, " is scheduled to the nodes (map_in_order):"
+                
+                time.sleep(fso_config_time)
+                
+                jobs_dispatch[first_num] = time.time()
+                jobs_cpus[first_num] = first_cpu
+#                 jobs_runtime[first_num] = first_time
+                
+                jobs_ssds[first_num] = first_ssd
+                jobs_gpus[first_num] = first_gpu
+                
+                jobs_npb[first_num] = first_npb
+                
+                
+#                 max_distance = 0
+#                 for i in range(len(ava_nodes)-1):
+#                     for j in range(i+1, len(ava_nodes)):
+#                         if nx.shortest_path_length(RG, ava_nodes[i], ava_nodes[j]) > max_distance:
+#                             max_distance = nx.shortest_path_length(RG, ava_nodes[i], ava_nodes[j])
+# 
+#                 dila = max_distance/int(math.sqrt(first_cpu)*2)
+#                 if max_distance%(math.sqrt(first_cpu)*2) > 0: 
+                               
+                subgraph_ava_nodes = RG.subgraph(ava_nodes)
+                if nx.is_connected(subgraph_ava_nodes) != True :
+                    dila = diam/int(math.sqrt(first_cpu)*2)
+                    if diam%int(math.sqrt(first_cpu)*2) > 0:
+                        dila = dila + 1
+                else:
+                    dila = nx.diameter(subgraph_ava_nodes)/int(math.sqrt(first_cpu)*2)
+                    if nx.diameter(subgraph_ava_nodes)%int(math.sqrt(first_cpu)*2) > 0:
+                        dila = dila + 1
+                if dila < 1:
+                    dila = 1
+                if dila > 4:
+                    dila = 4
+                if (MyPWA.archive.split(".")[-1] != "swf"):
+                    first_time = (float)(first_time.split("random")[1].split(":")[dila])
+                jobs_runtime[first_num] = first_time                 
+                
+#                 print "hahahhaha"
+                
+                n = 0
+                
+                for ava_node in ava_nodes:
+                    mylock.acquire()
+                    RG.node[ava_node]["cpu"] = 0
+                    RG.node[ava_node]["jobs"].append(first_num)
+#                         print "(", ava_nodes[i][0], ", ", ava_nodes[i][1], ") "
+#                                 nodelist.append(ava_nodes[i])
+#                         t = threading.Timer(jobs_[0][1][1], unlock0, (RG.node[ava_nodes[i]], ava_nodes[i][0], ava_nodes[i][1], i, jobs_[0],)) #required processing time
+#                         t.start()
+                    if first_ssd != 0 and n < first_ssd:
+                        RG.node[ava_node]["ssd"] = 0
+                    if first_gpu != 0 and n < first_gpu:
+                        RG.node[ava_node]["gpu"] = 0
+                    mylock.release()
+                    n = n + 1
+                    
+                    #huyao200915
+                    for sw in RG.neighbors(ava_node):
+                        ava_sws.append(sw)
+                        
+                jobs_cpus_nodes[first_num] = copy.copy(ava_nodes)
+                jobs_cpus_sws[first_num] = copy.copy(ava_sws) #huyao200915
+                                           
+                t = threading.Timer(first_time, unlock_unava, (ava_nodes, first,)) #required processing time
+                t.start()
+                queue.pop(0)
+#                     fill = 0
+                return                    
 
 # huyao 181109
 total = 0
@@ -2145,6 +2230,11 @@ while(True):
         if GUI.mode == "random_contiguous_loose":
             random_contiguous_loose()
             continue        
+ 
+        #200928 huyao map in order
+        if GUI.mode == "map_in_order":
+            map_in_order()
+            continue   
         
 #         if(transform==True):
 # #             g = divi_torus(first_cpu+fill)  

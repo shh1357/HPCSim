@@ -75,8 +75,9 @@ class MyFrame(wx.Frame):
         radio04 = wx.RadioButton(panel, 1, "random_contiguous")
         radio05 = wx.RadioButton(panel, 1, "random_non_contiguous") 
         radio06 = wx.RadioButton(panel, 1, "disaggregate_contiguous")  
-        radio07 = wx.RadioButton(panel, 1, "random_contiguous_loose")              
-        for eachRadio in [radio01, radio02, radio03, radio04, radio05, radio06, radio07]: 
+        radio07 = wx.RadioButton(panel, 1, "random_contiguous_loose")     
+        radio08 = wx.RadioButton(panel, 1, "map_in_order")            
+        for eachRadio in [radio01, radio02, radio03, radio04, radio05, radio06, radio07, radio08]: 
             self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio0, eachRadio)
             
 #151222         radio001 = wx.RadioButton(panel, 2, "grid", style=wx.RB_GROUP)  
@@ -183,6 +184,7 @@ class MyFrame(wx.Frame):
         sizer5.Add(radio05, 0, wx.ALL|wx.EXPAND, 5)
         sizer5.Add(radio06, 0, wx.ALL|wx.EXPAND, 5)
         sizer5.Add(radio07, 0, wx.ALL|wx.EXPAND, 5)
+        sizer5.Add(radio08, 0, wx.ALL|wx.EXPAND, 5)
         #sizer5.Add(wx.StaticText(self, -1, ''), 0, wx.ALL, 5)    
         
         sizer6.Add(label5, 0, wx.ALL|wx.EXPAND, 5)
