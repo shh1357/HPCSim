@@ -1,0 +1,2 @@
+avg_aspl,avg_diameter,avg_node,avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+2.162,3.226,11,0.0965449972153,3.97429839722,1.02770102431,1000,cpo_s4_p64_n64_r64.edge,connected,0,4096,1000,0.0001,backfilling,108.144999981,256,UniLu-Gaia-2014-2.swf
