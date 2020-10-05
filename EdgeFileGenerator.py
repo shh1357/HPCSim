@@ -64,5 +64,10 @@ def generate_edge_file(sws, ports, nodes, racks):
     for i in range(node_num_begin):
         print i, ": ", sw_port[i]
 
-generate_edge_file(4, 64, 64, 64)
-generate_edge_file(4, 128, 64, 128)
+# generate_edge_file(sws, ports, nodes, racks)
+# generate_edge_file(4, 64, 64, 64)
+# generate_edge_file(4, 128, 64, 128)
+# generate_edge_file(4, 64, 32, 64)
+# generate_edge_file(4, 64, 32, 128)
+# generate_edge_file(2, 64, 32, 64)
+# generate_edge_file(2, 128, 64, 128)
