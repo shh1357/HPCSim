@@ -1,0 +1,2 @@
+avg_aspl,avg_diameter,avg_node,avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+2.20581896552,3.06034482759,153,9.59633513412,10.9550201557,3.27521919643,928,cpo_s4_p64_n32_r128.edge,connected,0,4096,1000,0.0001,backfilling,45.2890000343,512,CEA-Curie-2011-2.1-cln.swf

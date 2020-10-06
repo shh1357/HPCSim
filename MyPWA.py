@@ -81,9 +81,9 @@ archive = "workloads/UniLu-Gaia-2014-2.swf"
 # edgelist = "edges/cpo_s4_p64_n64_r64.edge"
 # edgelist = "edges/cpo_s4_p128_n64_r128.edge"
 # edgelist = "edges/cpo_s4_p64_n32_r64.edge"
-edgelist = "edges/cpo_s4_p64_n32_r128.edge"
+# edgelist = "edges/cpo_s4_p64_n32_r128.edge"
 # edgelist = "edges/cpo_s2_p64_n32_r64.edge"
-# edgelist = "edges/cpo_s2_p128_n64_r128.edge"
+edgelist = "edges/cpo_s2_p128_n64_r128.edge"
 
 # names = ["job_number", 
 #          "cpu#", 
