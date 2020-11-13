@@ -2236,6 +2236,11 @@ while(True):
             map_in_order()
             continue   
         
+        #201113 huyao map sw hop (3)
+        if GUI.mode == "map_sw_hop_3":
+            map_sw_hop_3()
+            continue          
+        
 #         if(transform==True):
 # #             g = divi_torus(first_cpu+fill)  
 # #             if(g[0] == g[-1]):
