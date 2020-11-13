@@ -1444,7 +1444,7 @@ def map_in_order():
                 t.start()
                 queue.pop(0)
 #                     fill = 0
-                return                    
+                return                                                              
 
 # huyao 181109
 total = 0
@@ -1561,6 +1561,109 @@ def disaggregate_contiguous():
                     current = sws[sws_index] 
                 else:
                     break 
+ 
+#huyao 201113 based on disaggregate_contiguous()
+def map_sw_hop_3(): 
+    global jobs_dispatch, first_num, jobs_cpus, jobs_runtime, jobs_ssds, jobs_gpus, jobs_npb, first_time
+    for sw in range(host_start):
+        ava_nodes = []
+        current = sw
+        sws = []
+        sws.append(sw)    
+        sws_index = 0
+        ava_sws = []
+        while sws_index < len(sws):
+            hosts = [] 
+            for neighbor in RG.neighbors(current):
+                if neighbor < host_start and neighbor not in sws:
+                    sws.append(neighbor)            
+                if neighbor >= host_start:
+                    hosts.append(neighbor)    
+            if len(hosts) > 0:                 
+                for index, host in enumerate(hosts):
+                    if host not in ava_nodes and RG.node[host]["cpu"] > 0:   
+                        ava_nodes.append(host)     
+                        ava_sws.append(current)           
+                        if len(ava_nodes) == first_cpu:
+                            print datetime.datetime.now(), "job: ", first, " is scheduled to the nodes (disaggregate_contiguous):"
+                            time.sleep(fso_config_time)
+                            jobs_dispatch[first_num] = time.time()
+                            jobs_cpus[first_num] = first_cpu
+        #                         jobs_runtime[first_num] = first_time
+                            jobs_ssds[first_num] = first_ssd
+                            jobs_gpus[first_num] = first_gpu
+                            jobs_npb[first_num] = first_npb
+                            if (MyPWA.archive.split(".")[-1] != "swf"):
+                                first_time = (float)(first_time.split("random")[1].split(":")[1])
+                            jobs_runtime[first_num] = first_time                                         
+                            n = 0
+                            for ava_node in ava_nodes:
+                                mylock.acquire()
+                                RG.node[ava_node]["cpu"] = 0
+                                RG.node[ava_node]["jobs"].append(first_num)
+                                if first_ssd != 0 and n < first_ssd:
+                                    RG.node[ava_node]["ssd"] = 0
+                                if first_gpu != 0 and n < first_gpu:
+                                    RG.node[ava_node]["gpu"] = 0
+                                mylock.release()
+                                n = n + 1  
+    #                         time.sleep(1)
+    #                         print " first_num=== ", first_num, " ===first_num "
+    #                         print " first_cpu=== ", first_cpu, " ===first_cpu "
+    #                         print " sw=== ", sw, " ===sw "
+    #                         print " sws=== ", sws, " ===sws "
+    #                         print " ava_nodes=== ", ava_nodes, " ===ava_nodes "
+    #                         time.sleep(1)      
+                            jobs_cpus_nodes[first_num] = copy.copy(ava_nodes)       
+                            jobs_cpus_sws[first_num] = copy.copy(ava_sws)                     
+                            t = threading.Timer(first_time, unlock_unava, (ava_nodes, first,)) #required processing time
+                            t.start()
+                            queue.pop(0)
+                            return                        
+                    if index == len(hosts)-1:
+#                         sws_index = sws_index + 1
+#                         if sws_index == len(sws):
+#                             if total_cpu == tn:
+#                                 failed_jobs.append(first_num)
+#                                 queue.pop(0)
+#                                 reset()
+#                                 to_first = True
+#                                 return
+#                             break
+#                         current = sws[sws_index]  
+                        sws_index = sws_index + 1
+                        if sws_index == len(sws):
+                            if total_cpu == tn and sw == host_start - 1:
+                                failed_jobs.append(first_num)
+                                print datetime.datetime.now(), "job: ", first, " fails to be scheduled"
+                                queue.pop(0)   
+                                reset()
+                                to_first = True
+                                return                 
+                            break
+                        temp = copy.copy(ava_sws)
+                        temp.append(sws[sws_index])
+                        if nx.diameter(RG.subgraph(temp)) <= 3:                                       
+                            current = sws[sws_index] 
+                        else:
+                            break 
+            else:            
+                sws_index = sws_index + 1
+                if sws_index == len(sws):
+                    if total_cpu == tn and sw == host_start - 1:
+                        failed_jobs.append(first_num)
+                        print datetime.datetime.now(), "job: ", first, " fails to be scheduled"
+                        queue.pop(0)   
+                        reset()
+                        to_first = True
+                        return                 
+                    break
+                temp = copy.copy(ava_sws)
+                temp.append(sws[sws_index])
+                if nx.diameter(RG.subgraph(temp)) <= 3:                                       
+                    current = sws[sws_index] 
+                else:
+                    break  
                     
 #huyao 190627
 def lower_bound_diameter(n, d):
