@@ -1,0 +1,2 @@
+avg_aspl,avg_diameter,avg_node,avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+1.42662052398,1.80933333333,1106,3464.47327599,3464.91590946,3161.66072209,750,cpo_s4_p64_n64_r64.edge,connected,22,4096,1000,0.0001,backfilling,9035.54200006,256,ANL-Intrepid-2009-1.swf

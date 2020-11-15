@@ -1585,7 +1585,7 @@ def map_sw_hop_3():
                         ava_nodes.append(host)     
                         ava_sws.append(current)           
                         if len(ava_nodes) == first_cpu:
-                            print datetime.datetime.now(), "job: ", first, " is scheduled to the nodes (disaggregate_contiguous):"
+                            print datetime.datetime.now(), "job: ", first, " is scheduled to the nodes (map_sw_hop_3):"
                             time.sleep(fso_config_time)
                             jobs_dispatch[first_num] = time.time()
                             jobs_cpus[first_num] = first_cpu
@@ -1641,9 +1641,12 @@ def map_sw_hop_3():
                                 to_first = True
                                 return                 
                             break
-                        temp = copy.copy(ava_sws)
-                        temp.append(sws[sws_index])
-                        if nx.diameter(RG.subgraph(temp)) <= 3:                                       
+                        find = True
+                        for s in ava_sws:
+                            if nx.shortest_path_length(RG, s, sws[sws_index]) > 3:
+                                find = False
+                                break
+                        if find == True:                                       
                             current = sws[sws_index] 
                         else:
                             break 
@@ -1658,9 +1661,12 @@ def map_sw_hop_3():
                         to_first = True
                         return                 
                     break
-                temp = copy.copy(ava_sws)
-                temp.append(sws[sws_index])
-                if nx.diameter(RG.subgraph(temp)) <= 3:                                       
+                find = True
+                for s in ava_sws:
+                    if nx.shortest_path_length(RG, s, sws[sws_index]) > 3:
+                        find = False
+                        break
+                if find == True:                                       
                     current = sws[sws_index] 
                 else:
                     break  
