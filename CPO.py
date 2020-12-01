@@ -192,6 +192,7 @@ if(GUI.topo == "edge-list"):
         RG.node[node]["jobs"] = []  
 #     tn = 1024 # hosts
     tn = RG.number_of_nodes() - host_start
+#     print "diameter of host network: ", nx.diameter(RG)
 
 # print nx.is_connected(RG)
 # print nx.number_connected_components(RG)
