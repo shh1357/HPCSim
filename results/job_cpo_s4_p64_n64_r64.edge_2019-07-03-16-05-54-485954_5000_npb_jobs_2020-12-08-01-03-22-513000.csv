@@ -1,0 +1,2 @@
+avg_aspl,avg_diameter,avg_node,avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+2.3764,4.4376,76,0.0212348005772,0.368869720577,1.01065104139,5000,cpo_s4_p64_n64_r64.edge,connected,0,4096,5000,1.0,backfilling,108.971999884,256,2019-07-03-16-05-54-485954_5000_npb_jobs
