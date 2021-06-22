@@ -1,0 +1,2 @@
+avg_aspl,avg_diameter,avg_node,avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+2.68846217301,4.01341589267,22,0.158251003265,1.19785440327,1.04650434541,1000,n1024d8r.edge,connected,0,1024,1000,0.0001,backfilling,220.224999905,1024,HPC2N-2002-2.2-cln.swf

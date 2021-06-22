@@ -24,7 +24,7 @@ import pandas as pd
 # archive = "workloads/CTC-SP2-1996-3.1-cln.swf"
 # archive = "workloads/SDSC-SP2-1998-4.2-cln.swf"
 # archive = "workloads/OSC-Clust-2000-3.1-cln.swf"
-# archive = "workloads/HPC2N-2002-2.2-cln.swf"
+archive = "workloads/HPC2N-2002-2.2-cln.swf"
 # archive = "workloads/METACENTRUM-2009-2.swf"
 
 # archive = "workloads/wagap1-10-2013.swf" #cerit13 CERIT-SC_2013
@@ -33,7 +33,7 @@ import pandas as pd
 # archive = "workloads/CEA-Curie-2011-2.1-clncln.swf"
 # archive = "workloads/ANL-Intrepid-2009-1.swf" 
 # archive = "workloads/METACENTRUM-2013-3.swf" 
-archive = "workloads/UniLu-Gaia-2014-2.swf"
+# archive = "workloads/UniLu-Gaia-2014-2.swf"
 
 #archive = "workloads/2016-05-22-21-53-28-336000_200_jobs"
 #archive = "workloads/2016-05-22-21-53-28-422000_2000_jobs"
@@ -69,7 +69,7 @@ archive = "workloads/UniLu-Gaia-2014-2.swf"
 # archive = "workloads/2019-07-04-22-51-02-189737_900_npb_jobs"
 # archive = "workloads/2019-07-03-16-05-54-369066_1000_npb_jobs"
 # archive = "workloads/2019-07-03-16-05-54-380715_2000_npb_jobs"
-archive = "workloads/2019-07-03-16-05-54-404229_3000_npb_jobs"
+# archive = "workloads/2019-07-03-16-05-54-404229_3000_npb_jobs"
 # archive = "workloads/2019-07-03-16-05-54-439190_4000_npb_jobs"
 # archive = "workloads/2019-07-03-16-05-54-485954_5000_npb_jobs"
 # archive = "workloads/2019-07-03-16-05-54-531556_6000_npb_jobs"
@@ -96,12 +96,16 @@ archive = "workloads/2019-07-03-16-05-54-404229_3000_npb_jobs"
 #edgelist = "edges/Torus1024_conventional_1s1h"
 #edgelist = "edges/Torus1024_disaggregateB_1s1h"
 #edgelist = "edges/Torus1024_disaggregateC_1s1h"
-edgelist = "edges/cpo_s4_p64_n64_r64.edge"
+# edgelist = "edges/cpo_s4_p64_n64_r64.edge"
 # edgelist = "edges/cpo_s4_p128_n64_r128.edge"
 # edgelist = "edges/cpo_s4_p64_n32_r64.edge"
 # edgelist = "edges/cpo_s4_p64_n32_r128.edge"
 # edgelist = "edges/cpo_s2_p64_n32_r64.edge"
 # edgelist = "edges/cpo_s2_p128_n64_r128.edge"
+# edgelist = "edges/torus-4-4-8-8.edge"
+# edgelist = "edges/n1024d8r.edge"
+edgelist = "edges/n1024d8g.edge"
+
 
 # names = ["job_number", 
 #          "cpu#", 

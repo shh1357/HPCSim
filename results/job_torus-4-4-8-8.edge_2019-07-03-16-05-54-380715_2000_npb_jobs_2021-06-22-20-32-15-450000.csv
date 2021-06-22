@@ -1,0 +1,2 @@
+avg_aspl,avg_diameter,avg_node,avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+3.30604695889,6.3605,79,59.598759004,59.934445304,91.1763867054,2000,torus-4-4-8-8.edge,connected,0,1024,2000,1.0,backfilling,241.326999903,1024,2019-07-03-16-05-54-380715_2000_npb_jobs

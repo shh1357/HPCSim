@@ -1,0 +1,2 @@
+avg_aspl,avg_diameter,avg_node,avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+2.7129372722,4.24727272727,23,0.163686994076,1.16705889408,1.04256762041,1000,n1024d8r.edge,connected,0,1024,1000,0.0001,backfilling,182.486000061,1024,SDSC-Par-1996-3.1-cln.swf

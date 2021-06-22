@@ -1,0 +1,2 @@
+avg_aspl,avg_diameter,avg_node,avg_queue_time,avg_response_time,avg_slowdown,dispatched jobs,edgelist,embedding,failed jobs,hosts,jobs,scale,scheduling,simulation time,switches,workload
+2.48539989063,3.37260677467,19,0.0532119972706,0.115423997271,1.37245934013,1000,n1024d8g.edge,connected,0,1024,1000,0.0001,backfilling,68.7680001259,1024,NASA-iPSC-1993-3.1-cln.swf
