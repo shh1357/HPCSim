@@ -7,7 +7,7 @@ Created on 2015/08/01
 import os
 import pandas as pd
 
-#print os.getcwd()
+# print os.getcwd()
 
 # archive = "CEA-Curie-2011-2.1-cln.swf"
 # archive = "LLNL-Thunder-2007-1.1-cln.swf"
@@ -21,28 +21,28 @@ import pandas as pd
 # archive = "LANL-CM5-1994-4.1-cln.swf"
 archive = "workloads/UniLu-Gaia-2014-2.swf"
 
-names = ["Job Number", 
-         "Submit Time", 
-         "Wait Time", 
-         "Run Time", 
-         "Number of Allocated Processors", 
-         "Average CPU Time Used", 
-         "Used Memory", 
-         "Requested Number of Processors", 
-         "Requested Time", 
-         "Requested Memory", 
-         "Status", 
-         "User ID", 
-         "Group ID", 
-         "Executable (Application) Number", 
-         "Queue Number", 
-         "Partition Number", 
-         "Preceding Job Number", 
+names = ["Job Number",
+         "Submit Time",
+         "Wait Time",
+         "Run Time",
+         "Number of Allocated Processors",
+         "Average CPU Time Used",
+         "Used Memory",
+         "Requested Number of Processors",
+         "Requested Time",
+         "Requested Memory",
+         "Status",
+         "User ID",
+         "Group ID",
+         "Executable (Application) Number",
+         "Queue Number",
+         "Partition Number",
+         "Preceding Job Number",
          "Think Time from Preceding Job"]
- 
+
 # data = pd.read_csv(archive, comment=";", sep="\s+", header=None)
 
-data = pd.read_csv(archive, comment=";", sep="\s+", names=names) 
+data = pd.read_csv(archive, comment=";", sep="\s+", names=names)
 
 # print len(data)
 # print max(data["Requested Number of Processors"])
@@ -103,5 +103,4 @@ data = pd.read_csv(archive, comment=";", sep="\s+", names=names)
 # for col in range(len(data.columns)):
 #     columns.append(col)
 # print columns
-#print data[columns].mean(axis=0)
-
+# print data[columns].mean(axis=0)
