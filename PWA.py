@@ -9,8 +9,8 @@ import pandas as pd
 
 # print os.getcwd()
 
-# archive = "CEA-Curie-2011-2.1-cln.swf"
-# archive = "LLNL-Thunder-2007-1.1-cln.swf"
+#archive = "CEA-Curie-2011-2.1-cln.swf"
+archive = "workloads/LLNL-Thunder-2007-1.1-cln.swf"
 # archive = "LLNL-Atlas-2006-2.1-cln.swf"
 # archive = "LPC-EGEE-2004-1.2-cln.swf"
 # archive = "SDSC-DS-2004-2.1-cln.swf"
@@ -19,7 +19,7 @@ import pandas as pd
 # archive = "SDSC-Par-1996-3.1-cln.swf"
 # archive = "SDSC-Par-1995-3.1-cln.swf"
 # archive = "LANL-CM5-1994-4.1-cln.swf"
-archive = "workloads/UniLu-Gaia-2014-2.swf"
+#archive = "workloads/UniLu-Gaia-2014-2.swf"
 
 names = ["Job Number",
          "Submit Time",

@@ -77,7 +77,7 @@ for i in range(xa):
 #                             RG.node[(a,b,c,d,e)]["ava"] = "yes"
 
 
-k = 10000.0
+k = 100000.0
 
 # nx.write_adjlist(RG,"test.adjlist")
 
@@ -117,7 +117,8 @@ for i in range(len(data)):
 job_samples = jobs.items()
 queue = [job_samples[0]]
 # current = job_samples[0][1][2]
-num = len(job_samples)
+#num = len(job_samples)
+num = 100
 all_submitted = False
 
 
@@ -125,6 +126,7 @@ all_submitted = False
 def submit_jobs():
     current = job_samples[0][1][2]
     global queue, all_submitted
+    global wait_sum
     for i in range(1, num):
         wait = job_samples[i][1][2] - current
         if (wait >= 0):
@@ -147,6 +149,7 @@ def submit_jobs():
             #             if(GUI.schedule == "LIFO"):
             #                 queue.insert(1, queue.pop(-1))
             #             lock = False
+            #wait_sum = wait_sum + wait
             print datetime.datetime.now(), "job: ", job_samples[i], " is submitted"
         else:
             print datetime.datetime.now(), "job: ", job_samples[i], " can not be submitted"
@@ -337,9 +340,17 @@ first_time = queue[0][1][1]
 # 150825 huyao to_first in normal = fso_not_found in fso
 to_first = True
 
+
+#wait_times = []
+wait_sum = 0
+
+#for i in range(1, num):
+#    wait_times[i] = 0
+
 # while(len(queue)>0):
 while (True):
     if (len(queue) > 0):
+        wait_sum = wait_sum + 1
 
         #     print "haha", jobs_[0]
         #     print x
@@ -485,3 +496,6 @@ plt.setp(plt.gca(), 'ylim', list(reversed(plt.getp(plt.gca(), 'ylim'))))
 # plt.setp(plt.gca(), 'xlim', list(reversed(plt.getp(plt.gca(), 'xlim'))))
 # plt.show(block = False)
 plt.show()
+
+
+print "wait_sum: ", wait_sum
