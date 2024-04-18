@@ -489,13 +489,13 @@ while (True):
     elif (all_submitted == True):
         break
 
-nx.draw(RG, pos, node_size=30, with_labels=True)
-# nx.draw_networkx_nodes(RG,pos,nodelist=[(0,0)],node_color='b')
-nx.draw_networkx_nodes(RG, pos, nodelist=nodelist, node_color='b')
-plt.setp(plt.gca(), 'ylim', list(reversed(plt.getp(plt.gca(), 'ylim'))))
-# plt.setp(plt.gca(), 'xlim', list(reversed(plt.getp(plt.gca(), 'xlim'))))
-# plt.show(block = False)
-plt.show()
+# nx.draw(RG, pos, node_size=30, with_labels=True)
+# # nx.draw_networkx_nodes(RG,pos,nodelist=[(0,0)],node_color='b')
+# nx.draw_networkx_nodes(RG, pos, nodelist=nodelist, node_color='b')
+# plt.setp(plt.gca(), 'ylim', list(reversed(plt.getp(plt.gca(), 'ylim'))))
+# # plt.setp(plt.gca(), 'xlim', list(reversed(plt.getp(plt.gca(), 'xlim'))))
+# # plt.show(block = False)
+# plt.show()
 
 
-print "wait_sum: ", wait_sum
+print "-------------", xa, "wait_sum: ", wait_sum.real/100.0
