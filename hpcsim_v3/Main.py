@@ -11,8 +11,9 @@ import networkx as nx
 import matplotlib.pyplot as plt
 # import itertools
 import threading
-from . import GUI
-from . import PWA
+#from . import GUI
+import GUI
+import PWA
 import time
 import datetime
 
@@ -38,7 +39,7 @@ pos = dict(list(zip(RG, RG)))
 
 for i in range(xa):
     for j in range(ya):
-        RG.node[(i, j)]["ava"] = "yes"  # node availabitily
+        RG.nodes[(i, j)]["ava"] = "yes"  # node availabitily
 # else:
 #     torus_d = int(GUI.topo[0])
 #     if(torus_d == 2): #8*8
@@ -208,7 +209,7 @@ def divi(n, start=2):
 
 def unlock_unava(nl, job):
     while (len(nl) > 0):
-        RG.node[nl[0]]["ava"] = "yes"
+        RG.nodes[nl[0]]["ava"] = "yes"
         nodelist.remove(nl[0])
         nl.pop(0)
     print(datetime.datetime.now(), "job: ", job, "is finished")
@@ -231,13 +232,13 @@ def fso():
     global fso_not_found
     for yy in range(ya):
         for xx in range(xa):
-            if (RG.node[(xx, yy)]["ava"] == "yes"):
+            if (RG.nodes[(xx, yy)]["ava"] == "yes"):
                 count = count + 1
                 ava_nodes.append((xx, yy))
                 if (count == first_cpu):
                     print(datetime.datetime.now(), "job: ", first, " is scheduled to the nodes (fso):")
                     for i in range(len(ava_nodes)):
-                        RG.node[ava_nodes[i]]["ava"] = "no"
+                        RG.nodes[ava_nodes[i]]["ava"] = "no"
                         #                         print "(", ava_nodes[i][0], ", ", ava_nodes[i][1], ") "
                         nodelist.append(ava_nodes[i])
                     #                         t = threading.Timer(jobs_[0][1][1], unlock0, (RG.node[ava_nodes[i]], ava_nodes[i][0], ava_nodes[i][1], i, jobs_[0],)) #required processing time
@@ -300,7 +301,7 @@ def dostat():
         total = 0
         for ax in range(ya):
             for ay in range(xa):
-                if (RG.node[(ax, ay)]["ava"] == "no"):
+                if (RG.nodes[(ax, ay)]["ava"] == "no"):
                     total = total + 1
         ts = ts + 1
         #         print ts, "    ", total/tn
@@ -427,10 +428,10 @@ while (True):
                 flag_ = True  # useful if fill!=0
                 for xxx in range(xx, xx + x):  # ergodic in x*y grid
                     for yyy in range(yy, yy + y):
-                        if (RG.node[(xxx, yyy)]["ava"] == "no" and fill == 0):
+                        if (RG.nodes[(xxx, yyy)]["ava"] == "no" and fill == 0):
                             flag = False
                             break
-                        if (RG.node[(xxx, yyy)]["ava"] == "no" and fill == 1):
+                        if (RG.nodes[(xxx, yyy)]["ava"] == "no" and fill == 1):
                             if (flag_ == True):
                                 flag_ = False
                             else:
@@ -446,11 +447,11 @@ while (True):
                     for xxx in range(xx, xx + x):
                         for yyy in range(yy, yy + y):
                             if (xxx == xx + x - 1 and yyy == yy + y - 1 and fill == 1 and all == True and
-                                    RG.node[(xxx, yyy)]["ava"] == "yes"):
+                                    RG.nodes[(xxx, yyy)]["ava"] == "yes"):
                                 #                                 print xxx, yyy
                                 break
-                            if (RG.node[(xxx, yyy)]["ava"] == "yes"):
-                                RG.node[(xxx, yyy)]["ava"] = "no"
+                            if (RG.nodes[(xxx, yyy)]["ava"] == "yes"):
+                                RG.nodes[(xxx, yyy)]["ava"] = "no"
                                 #                             print "(", xxx, ", ", yyy, ") "
                                 nodelist.append((xxx, yyy))
                                 # print RG.node[(xxx,yyy)]
