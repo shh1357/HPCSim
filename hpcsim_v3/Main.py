@@ -198,7 +198,7 @@ def divi(n, start=2):
         return 1, 1
     for i in range(start, n + 1):
         if (n % i == 0):
-            return i, n / i  # i width; n/i length
+            return i, int(n / i)  # i width; n/i length
 
 
 # def unlock(node, endx, endy, endxx, endyy, job): 
