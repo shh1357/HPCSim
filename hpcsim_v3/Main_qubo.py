@@ -17,6 +17,11 @@ import PWA
 import time
 import datetime
 
+# qubo imports
+import pyqubo as pq
+import gurobipy as gp
+import ast
+
 # import Torus
 
 # xa = 5  #grid length
@@ -226,7 +231,71 @@ def unlock_unava(nl, job):
 fso_not_found = False
 
 
+
+# generate a QUBO model for embedding guest graph in host graph
+def embedding_qubo(guest, host):
+    pairs = [(v_g, v_h) for v_h in host.nodes for v_g in guest.nodes]
+    vars = {p: pq.Binary(str(p)) for p in pairs}
+    host2guest = [[vars[(v_g, v_h)] for v_g in guest.nodes] for v_h in host.nodes]
+    guest2host = [[vars[(v_g, v_h)] for v_h in host.nodes] for v_g in guest.nodes]
+    host_01 = sum([sum(p) * (sum(p) - 1) for p in host2guest])
+    guest_1 = sum([(sum(p) - 1) ** 2 for p in guest2host])
+    match = sum(
+        [
+            -vars[(e_g[0], e_h[0])] * vars[(e_g[1], e_h[1])]
+            - vars[(e_g[0], e_h[1])] * vars[(e_g[1], e_h[0])]
+            for e_h in host.edges
+            for e_g in guest.edges
+        ]
+    )
+    formula = match + len(guest.nodes) * host_01 + len(guest.nodes) * guest_1
+    model = formula.compile()
+    qubo, offset = model.to_qubo()
+    return qubo, int(offset)
+
+# Gurobi call back function: terminate if all guest edges are embedded
+def mycallback(model, where):
+    global qubo_optimal
+    if where == gp.GRB.Callback.MIPSOL:
+        if int(model.cbGet(gp.GRB.Callback.MIPSOL_OBJ)) == qubo_optimal:
+            model.terminate()
+
+# Find solution of qubo using Gurobi
+def gurobi(qubo, timelimit):
+    model = gp.Model()
+    model.setParam("TimeLimit", timelimit)
+    vars = {}
+    for v in list((v for tup in qubo for v in tup)):
+        vars[v] = model.addVar(vtype=gp.GRB.BINARY, name=v)
+    obj = [val * vars[key[0]] * vars[key[1]] for key, val in qubo.items()]
+    model.setObjective(gp.quicksum(obj), sense=gp.GRB.MINIMIZE)
+    model.optimize(mycallback)
+    solution = {key: int(val.X) for key, val in vars.items()}
+    return solution, int(model.ObjVal)
+
+# qubo
 def fso():
+    count = 0
+    ava_nodes = []
+    global fso_not_found
+
+    host = RG
+    guest = nx.grid_graph(count)
+
+    qubo, offset = embedding_qubo(guest, host)  # generate QUBO for embedding
+    qubo_optimal = -len(guest.edges) - offset  # optimal QUBO energy if all guest edge
+    #solution, objval = gurobi(qubo, args.timelimit)  # Find solution using Gurobi
+    solution, objval = gurobi(qubo)  # Find solution using Gurobi
+    mapping = {  # Find guest to host node mapping from solution
+        ast.literal_eval(key)[0]: ast.literal_eval(key)[1]
+        for key, val in solution.items()
+        if val == 1
+    }
+    print(datetime.datetime.now(), "job: ", first, " is scheduled to the nodes (qubo):")
+    fso_not_found = False
+
+
+def fso_org():
     count = 0
     ava_nodes = []
     global fso_not_found
