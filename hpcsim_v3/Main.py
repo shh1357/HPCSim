@@ -212,7 +212,7 @@ def unlock_unava(nl, job):
         RG.nodes[nl[0]]["ava"] = "yes"
         nodelist.remove(nl[0])
         nl.pop(0)
-    print(datetime.datetime.now(), "job: ", job, "is finished")
+    #print(datetime.datetime.now(), "job: ", job, "is finished")
 
 
 #     checkover()
@@ -498,5 +498,6 @@ while (True):
 # # plt.show(block = False)
 # plt.show()
 
+print("", flush=True)
 
 print("-------------", xa, "wait_sum: ", wait_sum.real/100.0)
