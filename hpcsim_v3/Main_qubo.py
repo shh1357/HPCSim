@@ -280,12 +280,15 @@ def fso():
     global fso_not_found
 
     host = RG
-    guest = nx.grid_graph(count)
+    #guest = nx.grid_graph(first_cpu)
+    guest = nx.Graph()
+    for ggg in range(first_cpu):
+        guest.add_node(ggg)
 
     qubo, offset = embedding_qubo(guest, host)  # generate QUBO for embedding
     qubo_optimal = -len(guest.edges) - offset  # optimal QUBO energy if all guest edge
     #solution, objval = gurobi(qubo, args.timelimit)  # Find solution using Gurobi
-    solution, objval = gurobi(qubo)  # Find solution using Gurobi
+    solution, objval = gurobi(qubo, 10)  # Find solution using Gurobi
     mapping = {  # Find guest to host node mapping from solution
         ast.literal_eval(key)[0]: ast.literal_eval(key)[1]
         for key, val in solution.items()
