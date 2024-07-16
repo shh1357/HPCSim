@@ -17,6 +17,8 @@ import PWA
 import time
 import datetime
 
+TIMESTEP = 1
+
 SPEED_UP_FACTOR = 100000.0
 
 # import Torus
@@ -270,12 +272,13 @@ def fso(first_job, first_job_cpu, first_job_time):
 #         global stopwrite
 #         stopwrite = True 
 
-# timestep = 0.5     150826 huyao scheduling->pwa  0.5->1 
-timestep = 1
 
 
 def dostat():
-    global timestep
+    # global timestep
+    # timestep = 0.5     150826 huyao scheduling->pwa  0.5->1
+    # timestep = TIMESTEP
+
     ts = 0  # time step
     tn = size_grid_x * size_grid_y  # total nodes
     #     f = open("stat_su", "w") #system utilization
@@ -294,15 +297,15 @@ def dostat():
         for ax in range(size_grid_y):
             for ay in range(size_grid_x):
                 if (RG.nodes[(ax, ay)]["ava"] == "no"):
-                    total = total + 1
-        ts = ts + 1
+                    total = total + TIMESTEP
+        ts = ts + TIMESTEP
         #         print ts, "    ", total/tn
-        s = str(ts * timestep) + "    " + str(total) + "    " + str(tn) + "    " + str(
+        s = str(ts * TIMESTEP) + "    " + str(total) + "    " + str(tn) + "    " + str(
             float(total) / tn) + "\n"  # 150826 huyao ts->ts*timestep
         f = open(fn, "a")  # system utilization
         f.write(s)
         f.close()
-        time.sleep(timestep)
+        time.sleep(TIMESTEP)
         if (total == 0 and len(queue) == 0 and all_submitted == True):
             break
 
