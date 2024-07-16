@@ -17,9 +17,10 @@ import PWA
 import time
 import datetime
 
+# simulation constants
 TIMESTEP = 1
-
 SPEED_UP_FACTOR = 100000.0
+NUM_SIMULATION_JOBS = 100
 
 # import Torus
 
@@ -129,7 +130,6 @@ job_samples = return_jobs_list()
 queue = [job_samples[0]]
 # current = job_samples[0][1][2]
 #num = len(job_samples)
-num_simulation_jobs = 100
 all_submitted = False
 
 
@@ -138,7 +138,7 @@ def submit_jobs():
     current = job_samples[0][1][2]
     global queue, all_submitted
     global wait_sum
-    for i in range(1, num_simulation_jobs):
+    for i in range(1, NUM_SIMULATION_JOBS):
         wait = job_samples[i][1][2] - current
         if (wait >= 0):
             time.sleep(wait)
@@ -165,7 +165,7 @@ def submit_jobs():
         else:
             print(datetime.datetime.now(), "job: ", job_samples[i], " can not be submitted")
             i = i + 1
-        if (i == num_simulation_jobs - 1):
+        if (i == NUM_SIMULATION_JOBS - 1):
             all_submitted = True
 
 
