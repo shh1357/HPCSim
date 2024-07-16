@@ -307,8 +307,12 @@ def dostat():
             break
 
 
-sj = threading.Timer(0, submit_jobs)  # submit jobs
-sj.start()
+def start_jobs_submitting_thread():
+    sj = threading.Timer(0, submit_jobs)  # submit jobs
+    sj.start()
+
+
+start_jobs_submitting_thread()
 
 stat = threading.Timer(0, dostat)  # required processing time
 stat.start()
