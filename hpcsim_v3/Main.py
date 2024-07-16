@@ -257,22 +257,6 @@ def fso():
                 fso_not_found = True
 
 
-def reset():
-    global x
-    global y
-    global transform
-    global tempX
-    global tempY
-    global fill
-    #     global lock
-    x = 0
-    y = 0
-    transform = False
-    tempX = 0
-    tempY = 0
-    fill = 0
-
-
 #     lock = False
 
 # stopwrite = False
@@ -325,14 +309,6 @@ sj.start()
 stat = threading.Timer(0, dostat)  # required processing time
 stat.start()
 
-x = 0
-y = 0
-transform = False
-tempX = 0
-tempY = 0
-fill = 0
-# 150821 huyao jobs_->queue  avoid any other job inserted during transform
-# lock = False
 
 # 150821 huyao available except FIFO
 if (GUI.schedule == "LIFO"):
@@ -351,148 +327,173 @@ wait_sum = 0
 
 #for i in range(1, num):
 #    wait_times[i] = 0
+def loop_allocate_all_jobs():
+    global wait_sum, first, first_num, first_cpu, first_time, to_first
+    x = 0
+    y = 0
+    transform = False
+    # tempX = 0
+    # tempY = 0
+    fill = 0
+    # 150821 huyao jobs_->queue  avoid any other job inserted during transform
+    # lock = False
 
-# while(len(queue)>0):
-while (True):
-    if (len(queue) > 0):
-        wait_sum = wait_sum + 1
+    def reset():
+        # global x, y, fill, transform, tempX, tempY
+        nonlocal x, y, fill, transform # , tempX, tempY
+        x = 0
+        y = 0
+        transform = False
+        # tempX = 0
+        # tempY = 0
+        fill = 0
 
-        #     print "haha", jobs_[0]
-        #     print x
-        #     print y
-        #     print transform
-        #     print tempX
-        #     print tempY
-        #     print fill
 
-        # 150821 huyao available except FIFO
-        #         if(lock==False):
-        if (transform == False and to_first == True and fso_not_found == False):
-            if (GUI.schedule == "LIFO"):
-                queue.insert(0, queue.pop(-1))
-            first = queue[0]
-            first_num = queue[0][0]
-            first_cpu = queue[0][1][0]
-            first_time = queue[0][1][1]
+    # while(len(queue)>0):
+    while (True):
+        if (len(queue) > 0):
+            wait_sum = wait_sum + 1
 
-            if (first_cpu < 1 or first_cpu > xa * ya or first_time < 0):
-                print(datetime.datetime.now(), "job: ", first, " can not be scheduled due to errorous requests")
-                queue.pop(0)
-                reset()
-                #         checkover()
-                to_first = True
+            #     print "haha", jobs_[0]
+            #     print x
+            #     print y
+            #     print transform
+            #     print tempX
+            #     print tempY
+            #     print fill
+
+            # 150821 huyao available except FIFO
+            #         if(lock==False):
+            if (transform == False and to_first == True and fso_not_found == False):
+                if (GUI.schedule == "LIFO"):
+                    queue.insert(0, queue.pop(-1))
+                first = queue[0]
+                first_num = queue[0][0]
+                first_cpu = queue[0][1][0]
+                first_time = queue[0][1][1]
+
+                if (first_cpu < 1 or first_cpu > xa * ya or first_time < 0):
+                    print(datetime.datetime.now(), "job: ", first, " can not be scheduled due to errorous requests")
+                    queue.pop(0)
+                    reset()
+                    #         checkover()
+                    to_first = True
+                    continue
+
+                    # 150819 huyao pure fso
+            if (GUI.mode == "FSO"):
+                fso()
                 continue
 
-                # 150819 huyao pure fso
-        if (GUI.mode == "FSO"):
-            fso()
-            continue
-
-        if (transform == True):
-            #             while(True):
-            #                 if(lock==False):
-            #                     break
-            g = divi(first_cpu + fill, tempY + 1)
-            x = g[1]
-            y = g[0]
-            if (x == 1 and y > 2):
-                #             transform = False
-                reset()
-                #                 if(GUI.mode=="FSO"):
-                #                     fso()
-                to_first = False
-                continue
-        else:
-            g = divi(first_cpu + fill)  # required cpus
-            x = g[1]  # length
-            y = g[0]  # width
-        while (x > xa):
-            g = divi(first_cpu + fill, y + 1)
-            x = g[1]
-            y = g[0]
-        if (y > ya):
-            if (transform == False):
-                print(datetime.datetime.now(), "job: ", first, " can not be scheduled due to lack of resources")
-                queue.pop(0)
-                to_first = True
-            #             checkover()
+            if (transform == True):
+                #             while(True):
+                #                 if(lock==False):
+                #                     break
+                g = divi(first_cpu + fill, tempY + 1)
+                x = g[1]
+                y = g[0]
+                if (x == 1 and y > 2):
+                    #             transform = False
+                    reset()
+                    #                 if(GUI.mode=="FSO"):
+                    #                     fso()
+                    to_first = False
+                    continue
             else:
-                to_first = False
-            reset()
-            continue
-        if (x == 1 and y > 2):
-            fill = 1
-            g = divi(first_cpu + fill)
-            x = g[1]  # length
-            y = g[0]  # width
-        found = False  # allocated cpus
-        for yy in range(ya - y + 1):  # left top vertex of x*y grid
-            for xx in range(xa - x + 1):
-                flag = True  # if each cpu is available in x*y grid
-                flag_ = True  # useful if fill!=0
-                for xxx in range(xx, xx + x):  # ergodic in x*y grid
-                    for yyy in range(yy, yy + y):
-                        if (RG.nodes[(xxx, yyy)]["ava"] == "no" and fill == 0):
-                            flag = False
-                            break
-                        if (RG.nodes[(xxx, yyy)]["ava"] == "no" and fill == 1):
-                            if (flag_ == True):
-                                flag_ = False
-                            else:
+                g = divi(first_cpu + fill)  # required cpus
+                x = g[1]  # length
+                y = g[0]  # width
+            while (x > xa):
+                g = divi(first_cpu + fill, y + 1)
+                x = g[1]
+                y = g[0]
+            if (y > ya):
+                if (transform == False):
+                    print(datetime.datetime.now(), "job: ", first, " can not be scheduled due to lack of resources")
+                    queue.pop(0)
+                    to_first = True
+                #             checkover()
+                else:
+                    to_first = False
+                reset()
+                continue
+            if (x == 1 and y > 2):
+                fill = 1
+                g = divi(first_cpu + fill)
+                x = g[1]  # length
+                y = g[0]  # width
+            found = False  # allocated cpus
+            for yy in range(ya - y + 1):  # left top vertex of x*y grid
+                for xx in range(xa - x + 1):
+                    flag = True  # if each cpu is available in x*y grid
+                    flag_ = True  # useful if fill!=0
+                    for xxx in range(xx, xx + x):  # ergodic in x*y grid
+                        for yyy in range(yy, yy + y):
+                            if (RG.nodes[(xxx, yyy)]["ava"] == "no" and fill == 0):
                                 flag = False
                                 break
+                            if (RG.nodes[(xxx, yyy)]["ava"] == "no" and fill == 1):
+                                if (flag_ == True):
+                                    flag_ = False
+                                else:
+                                    flag = False
+                                    break
 
-                    if (flag == False):
-                        break
-                if (flag == True):
-                    print(datetime.datetime.now(), "job: ", first, " is scheduled to the nodes:")
-                    all = True
-                    ava_to_unava = []
-                    for xxx in range(xx, xx + x):
-                        for yyy in range(yy, yy + y):
-                            if (xxx == xx + x - 1 and yyy == yy + y - 1 and fill == 1 and all == True and
-                                    RG.nodes[(xxx, yyy)]["ava"] == "yes"):
-                                #                                 print xxx, yyy
-                                break
-                            if (RG.nodes[(xxx, yyy)]["ava"] == "yes"):
-                                RG.nodes[(xxx, yyy)]["ava"] = "no"
-                                #                             print "(", xxx, ", ", yyy, ") "
-                                nodelist.append((xxx, yyy))
-                                # print RG.node[(xxx,yyy)]
-                                ava_to_unava.append((xxx, yyy))
-                            #                             t = threading.Timer(jobs_[0][1][1], unlock, (RG.node[(xxx,yyy)], xxx, yyy, xx, yy, jobs_[0],)) #required processing time
-                            #                             t.start()
-                            else:
-                                all = False
-                    t = threading.Timer(first_time, unlock_unavailable, (ava_to_unava, first,))  # required processing time
-                    t.start()
-                    queue.pop(0)
-                    found = True
-                    #                 transform = False
-                    #                 fill = 0
-                    reset()
-                    to_first = True
-                    break
-                if (yy == ya - y and xx == xa - x):
-                    # 150821 huyao check if any other job inserted during transform
-                    #                     if(first_num != queue[0][0]):
-                    #                         reset()
-                    #                         break
-                    # print datetime.datetime.now(), "job: ", jobs_[0], " can not be scheduled due to no available resources"
-                    # jobs_.pop(0)    #temp
-                    # 150828 huyao
-                    if (first_cpu == 2):
+                        if (flag == False):
+                            break
+                    if (flag == True):
+                        print(datetime.datetime.now(), "job: ", first, " is scheduled to the nodes:")
+                        all = True
+                        ava_to_unava = []
+                        for xxx in range(xx, xx + x):
+                            for yyy in range(yy, yy + y):
+                                if (xxx == xx + x - 1 and yyy == yy + y - 1 and fill == 1 and all == True and
+                                        RG.nodes[(xxx, yyy)]["ava"] == "yes"):
+                                    #                                 print xxx, yyy
+                                    break
+                                if (RG.nodes[(xxx, yyy)]["ava"] == "yes"):
+                                    RG.nodes[(xxx, yyy)]["ava"] = "no"
+                                    #                             print "(", xxx, ", ", yyy, ") "
+                                    nodelist.append((xxx, yyy))
+                                    # print RG.node[(xxx,yyy)]
+                                    ava_to_unava.append((xxx, yyy))
+                                #                             t = threading.Timer(jobs_[0][1][1], unlock, (RG.node[(xxx,yyy)], xxx, yyy, xx, yy, jobs_[0],)) #required processing time
+                                #                             t.start()
+                                else:
+                                    all = False
+                        t = threading.Timer(first_time, unlock_unavailable,
+                                            (ava_to_unava, first,))  # required processing time
+                        t.start()
+                        queue.pop(0)
+                        found = True
+                        #                 transform = False
+                        #                 fill = 0
                         reset()
-                        to_first = False
-                    transform = True
-                    #                     lock = True
-                    tempX = x
-                    tempY = y
-            if (found == True):
-                break
-                # print len(jobs_)
-    elif (all_submitted == True):
-        break
+                        to_first = True
+                        break
+                    if (yy == ya - y and xx == xa - x):
+                        # 150821 huyao check if any other job inserted during transform
+                        #                     if(first_num != queue[0][0]):
+                        #                         reset()
+                        #                         break
+                        # print datetime.datetime.now(), "job: ", jobs_[0], " can not be scheduled due to no available resources"
+                        # jobs_.pop(0)    #temp
+                        # 150828 huyao
+                        if (first_cpu == 2):
+                            reset()
+                            to_first = False
+                        transform = True
+                        #                     lock = True
+                        # tempX = x
+                        # tempY = y
+                if (found == True):
+                    break
+                    # print len(jobs_)
+        elif (all_submitted == True):
+            break
+
+
+loop_allocate_all_jobs()
 
 # nx.draw(RG, pos, node_size=30, with_labels=True)
 # # nx.draw_networkx_nodes(RG,pos,nodelist=[(0,0)],node_color='b')
