@@ -82,44 +82,48 @@ k = 100000.0
 
 # nx.write_adjlist(RG,"test.adjlist")
 
-jobs = {}
 
-# jobs[0] = (4,8)   #job number, required cpus, required time (in seconds)
-# jobs[1] = (2,4)
-# jobs[2] = (6,8)
-# jobs[3] = (2,1)
-# jobs[4] = (4,4)
-# jobs[5] = (2,3)
-# jobs[6] = (4,8)
-# jobs[7] = (6,5)
-# jobs[8] = (1,7)
-# jobs[9] = (5,2)
-# jobs[10] = (5,6)
-# jobs[11] = (-1,2)
+def return_jobs_list():
+    jobs = {}
 
-data = PWA.data
-for i in range(len(data)):
-    #     jobs[i] = (data["Requested Number of Processors"][i], data["Requested Time"][i]/k)
-    jobs[i] = (data["Number of Allocated Processors"][i], data["Run Time"][i] / k, data["Submit Time"][i] / k)
+    # jobs[0] = (4,8)   #job number, required cpus, required time (in seconds)
+    # jobs[1] = (2,4)
+    # jobs[2] = (6,8)
+    # jobs[3] = (2,1)
+    # jobs[4] = (4,4)
+    # jobs[5] = (2,3)
+    # jobs[6] = (4,8)
+    # jobs[7] = (6,5)
+    # jobs[8] = (1,7)
+    # jobs[9] = (5,2)
+    # jobs[10] = (5,6)
+    # jobs[11] = (-1,2)
+    data = PWA.data
+    for i in range(len(data)):
+        #     jobs[i] = (data["Requested Number of Processors"][i], data["Requested Time"][i]/k)
+        jobs[i] = (data["Number of Allocated Processors"][i], data["Run Time"][i] / k, data["Submit Time"][i] / k)
+    # jobs = []
+    # jobs.append(0, (4,800))
+    # jobs.append(1, (2,400))
+    # jobs.append(2, (6,800))
+    # jobs.append(3, (2,100))
+    # jobs.append(4, (4,400))
+    # jobs.append(5, (2,300))
+    # jobs.append(6, (4,800))
+    # jobs.append(7, (6,500))
 
-# jobs = []
-# jobs.append(0, (4,800))
-# jobs.append(1, (2,400))
-# jobs.append(2, (6,800))
-# jobs.append(3, (2,100))
-# jobs.append(4, (4,400))
-# jobs.append(5, (2,300))
-# jobs.append(6, (4,800))
-# jobs.append(7, (6,500))
+    # jobs_ = zip(jobs.keys(), jobs.values())
+    return list(jobs.items())
 
 
-# jobs_ = zip(jobs.keys(), jobs.values())
 
-job_samples = list(jobs.items())
+
+
+job_samples = return_jobs_list()
 queue = [job_samples[0]]
 # current = job_samples[0][1][2]
 #num = len(job_samples)
-num = 100
+num_simulation_jobs = 100
 all_submitted = False
 
 
@@ -128,7 +132,7 @@ def submit_jobs():
     current = job_samples[0][1][2]
     global queue, all_submitted
     global wait_sum
-    for i in range(1, num):
+    for i in range(1, num_simulation_jobs):
         wait = job_samples[i][1][2] - current
         if (wait >= 0):
             time.sleep(wait)
@@ -155,7 +159,7 @@ def submit_jobs():
         else:
             print(datetime.datetime.now(), "job: ", job_samples[i], " can not be submitted")
             i = i + 1
-        if (i == num - 1):
+        if (i == num_simulation_jobs - 1):
             all_submitted = True
 
 
@@ -207,7 +211,7 @@ def divi(n, start=2):
 #     if(endx==endxx and endy==endyy):
 #         print datetime.datetime.now(), "job: ", job, "is finished"
 
-def unlock_unava(nl, job):
+def unlock_unavailable(nl, job):
     while (len(nl) > 0):
         RG.nodes[nl[0]]["ava"] = "yes"
         nodelist.remove(nl[0])
@@ -243,7 +247,7 @@ def fso():
                         nodelist.append(ava_nodes[i])
                     #                         t = threading.Timer(jobs_[0][1][1], unlock0, (RG.node[ava_nodes[i]], ava_nodes[i][0], ava_nodes[i][1], i, jobs_[0],)) #required processing time
                     #                         t.start()
-                    t = threading.Timer(first_time, unlock_unava, (ava_nodes, first,))  # required processing time
+                    t = threading.Timer(first_time, unlock_unavailable, (ava_nodes, first,))  # required processing time
                     t.start()
                     queue.pop(0)
                     #                     fill = 0
@@ -460,7 +464,7 @@ while (True):
                             #                             t.start()
                             else:
                                 all = False
-                    t = threading.Timer(first_time, unlock_unava, (ava_to_unava, first,))  # required processing time
+                    t = threading.Timer(first_time, unlock_unavailable, (ava_to_unava, first,))  # required processing time
                     t.start()
                     queue.pop(0)
                     found = True
