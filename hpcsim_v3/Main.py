@@ -17,28 +17,34 @@ import PWA
 import time
 import datetime
 
+SPEED_UP_FACTOR = 100000.0
+
 # import Torus
 
-# xa = 5  #grid length
-# ya = 5  #grid width
 
-app = GUI.MyApp(0)  # Create an instance of the application class
-app.MainLoop()  # Tell it to start processing events
+def set_parameters_gui():
+    app = GUI.MyApp(0)  # Create an instance of the application class
+    app.MainLoop()  # Tell it to start processing events
+
+
+set_parameters_gui()
 
 # torus_d = 1
 
-xa = GUI.xxxx
-ya = GUI.yyyy
+# xa = 5  # grid length
+# ya = 5  # grid width
+size_grid_x = GUI.xxxx  # grid length
+size_grid_y = GUI.yyyy  # grid width
 
 # RG = nx.Graph()   
 # pos = dict(zip(RG,RG))  
 
 # if(GUI.topo == "grid"): 
-RG = nx.grid_2d_graph(xa, ya)
-pos = dict(list(zip(RG, RG)))
+RG = nx.grid_2d_graph(size_grid_x, size_grid_y)
+# pos = dict(list(zip(RG, RG)))
 
-for i in range(xa):
-    for j in range(ya):
+for i in range(size_grid_x):
+    for j in range(size_grid_y):
         RG.nodes[(i, j)]["ava"] = "yes"  # node availabitily
 # else:
 #     torus_d = int(GUI.topo[0])
@@ -78,8 +84,6 @@ for i in range(xa):
 #                             RG.node[(a,b,c,d,e)]["ava"] = "yes"
 
 
-k = 100000.0
-
 # nx.write_adjlist(RG,"test.adjlist")
 
 
@@ -101,7 +105,7 @@ def return_jobs_list():
     data = PWA.data
     for i in range(len(data)):
         #     jobs[i] = (data["Requested Number of Processors"][i], data["Requested Time"][i]/k)
-        jobs[i] = (data["Number of Allocated Processors"][i], data["Run Time"][i] / k, data["Submit Time"][i] / k)
+        jobs[i] = (data["Number of Allocated Processors"][i], data["Run Time"][i] / SPEED_UP_FACTOR, data["Submit Time"][i] / SPEED_UP_FACTOR)
     # jobs = []
     # jobs.append(0, (4,800))
     # jobs.append(1, (2,400))
@@ -230,30 +234,30 @@ def unlock_unavailable(nl, job):
 fso_not_found = False
 
 
-def fso():
+def fso(first_job, first_job_cpu, first_job_time):
     count = 0
     ava_nodes = []
     global fso_not_found
-    for yy in range(ya):
-        for xx in range(xa):
+    for yy in range(size_grid_y):
+        for xx in range(size_grid_x):
             if (RG.nodes[(xx, yy)]["ava"] == "yes"):
                 count = count + 1
                 ava_nodes.append((xx, yy))
-                if (count == first_cpu):
-                    print(datetime.datetime.now(), "job: ", first, " is scheduled to the nodes (fso):")
+                if (count == first_job_cpu):
+                    print(datetime.datetime.now(), "job: ", first_job, " is scheduled to the nodes (fso):")
                     for i in range(len(ava_nodes)):
                         RG.nodes[ava_nodes[i]]["ava"] = "no"
                         #                         print "(", ava_nodes[i][0], ", ", ava_nodes[i][1], ") "
                         nodelist.append(ava_nodes[i])
                     #                         t = threading.Timer(jobs_[0][1][1], unlock0, (RG.node[ava_nodes[i]], ava_nodes[i][0], ava_nodes[i][1], i, jobs_[0],)) #required processing time
                     #                         t.start()
-                    t = threading.Timer(first_time, unlock_unavailable, (ava_nodes, first,))  # required processing time
+                    t = threading.Timer(first_job_time, unlock_unavailable, (ava_nodes, first_job,))  # required processing time
                     t.start()
                     queue.pop(0)
                     #                     fill = 0
                     fso_not_found = False
                     return
-            if (xx == xa - 1 and yy == ya - 1):
+            if (xx == size_grid_x - 1 and yy == size_grid_y - 1):
                 fso_not_found = True
 
 
@@ -273,22 +277,22 @@ timestep = 1
 def dostat():
     global timestep
     ts = 0  # time step
-    tn = xa * ya  # total nodes
+    tn = size_grid_x * size_grid_y  # total nodes
     #     f = open("stat_su", "w") #system utilization
     dt = str(datetime.datetime.now())
     dt = dt.replace(" ", "-")
     dt = dt.replace(".", "-")
     dt = dt.replace(":", "-")
     ar = PWA.archive.replace(".", "-")
-    fn = "stat_su_" + dt + "_" + str(xa * ya) + "_" + GUI.schedule + "_" + GUI.mode + "_" + ar  # file name
+    fn = "stat_su_" + dt + "_" + str(size_grid_x * size_grid_y) + "_" + GUI.schedule + "_" + GUI.mode + "_" + ar  # file name
     f = open(fn, "w")  # system utilization
     f.write("#timestep  occupied  total  utilization\n")
     f.close()
     #     while(stopwrite==False):
     while (True):
         total = 0
-        for ax in range(ya):
-            for ay in range(xa):
+        for ax in range(size_grid_y):
+            for ay in range(size_grid_x):
                 if (RG.nodes[(ax, ay)]["ava"] == "no"):
                     total = total + 1
         ts = ts + 1
@@ -313,39 +317,46 @@ stat.start()
 # 150821 huyao available except FIFO
 if (GUI.schedule == "LIFO"):
     queue.insert(0, queue.pop(-1))
-first = queue[0]
-first_num = queue[0][0]
-first_cpu = queue[0][1][0]
-first_time = queue[0][1][1]
 
 # 150825 huyao to_first in normal = fso_not_found in fso
 to_first = True
 
 
 #wait_times = []
-wait_sum = 0
-
 #for i in range(1, num):
 #    wait_times[i] = 0
+wait_sum = 0
+
+
 def loop_allocate_all_jobs():
-    global wait_sum, first, first_num, first_cpu, first_time, to_first
+    global wait_sum
+    global to_first
+
+    # global first, first_num, first_cpu, first_time
+    first = queue[0]
+    first_num = queue[0][0]
+    first_cpu = queue[0][1][0]
+    first_time = queue[0][1][1]
+
+
+    #
     x = 0
     y = 0
     transform = False
-    # tempX = 0
-    # tempY = 0
+    temp_x = 0
+    temp_y = 0
     fill = 0
     # 150821 huyao jobs_->queue  avoid any other job inserted during transform
     # lock = False
 
     def reset():
         # global x, y, fill, transform, tempX, tempY
-        nonlocal x, y, fill, transform # , tempX, tempY
+        nonlocal x, y, fill, transform , temp_x, temp_y
         x = 0
         y = 0
         transform = False
-        # tempX = 0
-        # tempY = 0
+        temp_x = 0
+        temp_y = 0
         fill = 0
 
 
@@ -372,7 +383,7 @@ def loop_allocate_all_jobs():
                 first_cpu = queue[0][1][0]
                 first_time = queue[0][1][1]
 
-                if (first_cpu < 1 or first_cpu > xa * ya or first_time < 0):
+                if (first_cpu < 1 or first_cpu > size_grid_x * size_grid_y or first_time < 0):
                     print(datetime.datetime.now(), "job: ", first, " can not be scheduled due to errorous requests")
                     queue.pop(0)
                     reset()
@@ -382,14 +393,14 @@ def loop_allocate_all_jobs():
 
                     # 150819 huyao pure fso
             if (GUI.mode == "FSO"):
-                fso()
+                fso(first, first_cpu, first_time)
                 continue
 
             if (transform == True):
                 #             while(True):
                 #                 if(lock==False):
                 #                     break
-                g = divi(first_cpu + fill, tempY + 1)
+                g = divi(first_cpu + fill, temp_y + 1)
                 x = g[1]
                 y = g[0]
                 if (x == 1 and y > 2):
@@ -403,11 +414,13 @@ def loop_allocate_all_jobs():
                 g = divi(first_cpu + fill)  # required cpus
                 x = g[1]  # length
                 y = g[0]  # width
-            while (x > xa):
+
+            while (x > size_grid_x):
                 g = divi(first_cpu + fill, y + 1)
                 x = g[1]
                 y = g[0]
-            if (y > ya):
+
+            if (y > size_grid_y):
                 if (transform == False):
                     print(datetime.datetime.now(), "job: ", first, " can not be scheduled due to lack of resources")
                     queue.pop(0)
@@ -417,14 +430,15 @@ def loop_allocate_all_jobs():
                     to_first = False
                 reset()
                 continue
+
             if (x == 1 and y > 2):
                 fill = 1
                 g = divi(first_cpu + fill)
                 x = g[1]  # length
                 y = g[0]  # width
             found = False  # allocated cpus
-            for yy in range(ya - y + 1):  # left top vertex of x*y grid
-                for xx in range(xa - x + 1):
+            for yy in range(size_grid_y - y + 1):  # left top vertex of x*y grid
+                for xx in range(size_grid_x - x + 1):
                     flag = True  # if each cpu is available in x*y grid
                     flag_ = True  # useful if fill!=0
                     for xxx in range(xx, xx + x):  # ergodic in x*y grid
@@ -471,7 +485,7 @@ def loop_allocate_all_jobs():
                         reset()
                         to_first = True
                         break
-                    if (yy == ya - y and xx == xa - x):
+                    if (yy == size_grid_y - y and xx == size_grid_x - x):
                         # 150821 huyao check if any other job inserted during transform
                         #                     if(first_num != queue[0][0]):
                         #                         reset()
@@ -484,8 +498,8 @@ def loop_allocate_all_jobs():
                             to_first = False
                         transform = True
                         #                     lock = True
-                        # tempX = x
-                        # tempY = y
+                        temp_x = x
+                        temp_y = y
                 if (found == True):
                     break
                     # print len(jobs_)
@@ -505,4 +519,4 @@ loop_allocate_all_jobs()
 
 print("", flush=True)
 
-print("-------------", xa, "wait_sum: ", wait_sum.real/100.0)
+print("-------------", size_grid_x, "wait_sum: ", wait_sum.real / 100.0)
