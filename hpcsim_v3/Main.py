@@ -31,11 +31,11 @@ RG = None
 all_jobs = None
 job_queue = None
 all_jobs_submitted = False
+result_wait_sum = 0
+
 #wait_times = []
 #for i in range(1, num):
 #    wait_times[i] = 0
-result_wait_sum = 0
-
 
 
 def set_gui_parameters():
@@ -104,11 +104,11 @@ def initialize_RG():
     #                             RG.node[(a,b,c,d,e)]["ava"] = "yes"
 
 
-
 # nx.write_adjlist(RG,"test.adjlist")
 
 
-def get_jobs_list():
+def initialize_all_jobs_list():
+    global all_jobs
     jobs = {}
 
     # jobs[0] = (4,8)   #job number, required cpus, required time (in seconds)
@@ -138,20 +138,15 @@ def get_jobs_list():
     # jobs.append(7, (6,500))
 
     # jobs_ = zip(jobs.keys(), jobs.values())
-    return list(jobs.items())
-
-
-
-
+    all_jobs = list(jobs.items())
 
 
 def initialize_job_queue():
+    global job_queue
     job_queue = [all_jobs[0]]
     # 150821 huyao available except FIFO
     if (GUI.schedule == "LIFO"):
         job_queue.insert(0, job_queue.pop(-1))
-
-
 
 
 def submit_jobs():
@@ -266,8 +261,9 @@ def fso(first_job, first_job_cpu, first_job_time):
                         RG.nodes[ava_nodes[i]]["ava"] = "no"
                         #                         print "(", ava_nodes[i][0], ", ", ava_nodes[i][1], ") "
                         nodelist_to_draw.append(ava_nodes[i])
-                    #                         t = threading.Timer(jobs_[0][1][1], unlock0, (RG.node[ava_nodes[i]], ava_nodes[i][0], ava_nodes[i][1], i, jobs_[0],)) #required processing time
-                    #                         t.start()
+                    # t = threading.Timer(jobs_[0][1][1], unlock0, (RG.node[ava_nodes[i]], ava_nodes[i][0],
+                    # ava_nodes[i][1], i, jobs_[0],)) #required processing time
+                    # t.start()
                     t = threading.Timer(first_job_time, unlock_unavailable, (ava_nodes, first_job,))  # required processing time
                     t.start()
                     job_queue.pop(0)
@@ -521,17 +517,20 @@ def loop_allocate_all_jobs():
 
 
 def simulation_main():
-    global all_jobs
     initialize_graph()
-    all_jobs = get_jobs_list()
+    initialize_all_jobs_list()
     initialize_job_queue()
-    #
+
+    # start two threads
     start_jobs_submitting_thread()
     start_dostat_thread()
-    #
+
+    # job allocation
     loop_allocate_all_jobs()
+
     if (False):
         draw_image()
+
     print("", flush=True)
     print("-------------", size_grid_x, "wait_sum: ", result_wait_sum.real / 100.0)
 
