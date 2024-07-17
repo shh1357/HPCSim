@@ -1,17 +1,17 @@
-'''
+"""
 Created on 2015/07/17
 
 @author: smallcat
 
 grid
-'''
+"""
 
 # from __future__ import division
 import networkx as nx
 import matplotlib.pyplot as plt
 # import itertools
 import threading
-#from . import GUI
+# from . import GUI
 import GUI
 import PWA
 import time
@@ -128,6 +128,8 @@ def get_jobs_list():
 
 
 job_samples = get_jobs_list()
+
+
 queue = [job_samples[0]]
 # current = job_samples[0][1][2]
 # num = len(job_samples)
@@ -329,9 +331,6 @@ start_dostat_thread()
 if (GUI.schedule == "LIFO"):
     queue.insert(0, queue.pop(-1))
 
-# 150825 huyao to_first in normal = fso_not_found in fso
-to_first = True
-
 
 #wait_times = []
 #for i in range(1, num):
@@ -341,14 +340,17 @@ wait_sum = 0
 
 def loop_allocate_all_jobs():
     global wait_sum
-    global to_first
+
+    fso_not_found = False
+    # global to_first
+    # 150825 huyao to_first in normal = fso_not_found in fso
+    to_first = True
 
     # global first, first_num, first_cpu, first_time
     first = queue[0]
     first_num = queue[0][0]
     first_cpu = queue[0][1][0]
     first_time = queue[0][1][1]
-
 
     #
     x = 0
@@ -373,7 +375,6 @@ def loop_allocate_all_jobs():
 
     # while(len(queue)>0):
     while (True):
-        fso_not_found = False
 
         if (len(queue) > 0):
             wait_sum = wait_sum + 1
@@ -522,13 +523,19 @@ def loop_allocate_all_jobs():
 
 loop_allocate_all_jobs()
 
-# nx.draw(RG, pos, node_size=30, with_labels=True)
-# # nx.draw_networkx_nodes(RG,pos,nodelist=[(0,0)],node_color='b')
-# nx.draw_networkx_nodes(RG, pos, nodelist=nodelist, node_color='b')
-# plt.setp(plt.gca(), 'ylim', list(reversed(plt.getp(plt.gca(), 'ylim'))))
-# # plt.setp(plt.gca(), 'xlim', list(reversed(plt.getp(plt.gca(), 'xlim'))))
-# # plt.show(block = False)
-# plt.show()
+def draw_image():
+    pos = dict(list(zip(RG, RG)))
+    nx.draw(RG, pos, node_size=30, with_labels=True)
+    # nx.draw_networkx_nodes(RG,pos,nodelist=[(0,0)],node_color='b')
+    nx.draw_networkx_nodes(RG, pos, nodelist=nodelist, node_color='b')
+    plt.setp(plt.gca(), 'ylim', list(reversed(plt.getp(plt.gca(), 'ylim'))))
+    # plt.setp(plt.gca(), 'xlim', list(reversed(plt.getp(plt.gca(), 'xlim'))))
+    # plt.show(block = False)
+    plt.show()
+
+
+if (False):
+    draw_image()
 
 print("", flush=True)
 
