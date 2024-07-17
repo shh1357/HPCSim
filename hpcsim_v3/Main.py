@@ -16,37 +16,53 @@ import GUI
 import PWA
 import time
 import datetime
+# import Torus
+
 
 # simulation constants
 TIMESTEP_UNIT = 1
 SPEED_UP_FACTOR = 100000.0
 NUM_SIMULATION_JOBS = 100
 
-# import Torus
+# global variables
+size_grid_x = 0
+size_grid_y = 0
+RG = None
+all_jobs = None
+job_queue = None
+all_jobs_submitted = False
+#wait_times = []
+#for i in range(1, num):
+#    wait_times[i] = 0
+result_wait_sum = 0
 
 
-def set_parameters_gui():
+
+def set_gui_parameters():
     app = GUI.MyApp(0)  # Create an instance of the application class
     app.MainLoop()  # Tell it to start processing events
 
 
-set_parameters_gui()
+def initialize_graph():
+    global size_grid_x, size_grid_y
+    set_gui_parameters()
+    # torus_d = 1
+    # xa = 5  # grid length
+    # ya = 5  # grid width
+    size_grid_x = GUI.xxxx  # grid length
+    size_grid_y = GUI.yyyy  # grid width
+    initialize_RG()
 
-# torus_d = 1
-
-# xa = 5  # grid length
-# ya = 5  # grid width
-size_grid_x = GUI.xxxx  # grid length
-size_grid_y = GUI.yyyy  # grid width
-
-# RG = nx.Graph()   
-# pos = dict(zip(RG,RG))  
-
-# if(GUI.topo == "grid"): 
-RG = nx.grid_2d_graph(size_grid_x, size_grid_y)
-# pos = dict(list(zip(RG, RG)))
 
 def initialize_RG():
+    global RG
+    # RG = nx.Graph()
+    # pos = dict(zip(RG,RG))
+
+    # if(GUI.topo == "grid"):
+    RG = nx.grid_2d_graph(size_grid_x, size_grid_y)
+    # pos = dict(list(zip(RG, RG)))
+
     for i in range(size_grid_x):
         for j in range(size_grid_y):
             RG.nodes[(i, j)]["ava"] = "yes"  # node availabitily
@@ -88,8 +104,6 @@ def initialize_RG():
     #                             RG.node[(a,b,c,d,e)]["ava"] = "yes"
 
 
-initialize_RG()
-
 
 # nx.write_adjlist(RG,"test.adjlist")
 
@@ -127,44 +141,47 @@ def get_jobs_list():
     return list(jobs.items())
 
 
-job_samples = get_jobs_list()
 
 
-queue = [job_samples[0]]
-# current = job_samples[0][1][2]
-# num = len(job_samples)
-all_jobs_submitted = False
 
 
-# lock = False
+def initialize_job_queue():
+    job_queue = [all_jobs[0]]
+    # 150821 huyao available except FIFO
+    if (GUI.schedule == "LIFO"):
+        job_queue.insert(0, job_queue.pop(-1))
+
+
+
+
 def submit_jobs():
-    current = job_samples[0][1][2]
-    global queue, all_jobs_submitted
+    current_time = all_jobs[0][1][2]
+    global job_queue, all_jobs_submitted
     for i in range(1, NUM_SIMULATION_JOBS):
-        wait = job_samples[i][1][2] - current
-        if (wait >= 0):
-            time.sleep(wait)
-            current = job_samples[i][1][2]
-            queue.append(job_samples[i])
+        wait_time = all_jobs[i][1][2] - current_time
+        if (wait_time >= 0):
+            time.sleep(wait_time)
+            current_time = all_jobs[i][1][2]
+            job_queue.append(all_jobs[i])
 
             # 150824 huyao
             #             global lock
             #             lock = True
             if (GUI.schedule == "BF"):
                 # 150824 huyao first unchanged during insertion
-                one = queue.pop(0)
-                queue = sorted(queue, key=lambda abc: abc[1], reverse=True)
-                queue.insert(0, one)
+                one = job_queue.pop(0)
+                job_queue = sorted(job_queue, key=lambda abc: abc[1], reverse=True)
+                job_queue.insert(0, one)
             if (GUI.schedule == "SF"):
-                one = queue.pop(0)
-                queue = sorted(queue, key=lambda abc: abc[1])
-                queue.insert(0, one)
+                one = job_queue.pop(0)
+                job_queue = sorted(job_queue, key=lambda abc: abc[1])
+                job_queue.insert(0, one)
             #             if(GUI.schedule == "LIFO"):
             #                 queue.insert(1, queue.pop(-1))
             #             lock = False
-            print(datetime.datetime.now(), "job: ", job_samples[i], " is submitted")
+            print(datetime.datetime.now(), "job: ", all_jobs[i], " is submitted")
         else:
-            print(datetime.datetime.now(), "job: ", job_samples[i], " can not be submitted")
+            print(datetime.datetime.now(), "job: ", all_jobs[i], " can not be submitted")
             i = i + 1
         if (i == NUM_SIMULATION_JOBS - 1):
             all_jobs_submitted = True
@@ -180,8 +197,6 @@ def submit_jobs():
 
 # print RG.nodes(data = True)
 # print RG.edges()
-
-nodelist = []
 
 
 # print jobs_[0][1][0]
@@ -221,7 +236,7 @@ def divi(n, start=2):
 def unlock_unavailable(nl, job):
     while (len(nl) > 0):
         RG.nodes[nl[0]]["ava"] = "yes"
-        nodelist.remove(nl[0])
+        nodelist_to_draw.remove(nl[0])
         nl.pop(0)
     #print(datetime.datetime.now(), "job: ", job, "is finished")
 
@@ -250,12 +265,12 @@ def fso(first_job, first_job_cpu, first_job_time):
                     for i in range(len(ava_nodes)):
                         RG.nodes[ava_nodes[i]]["ava"] = "no"
                         #                         print "(", ava_nodes[i][0], ", ", ava_nodes[i][1], ") "
-                        nodelist.append(ava_nodes[i])
+                        nodelist_to_draw.append(ava_nodes[i])
                     #                         t = threading.Timer(jobs_[0][1][1], unlock0, (RG.node[ava_nodes[i]], ava_nodes[i][0], ava_nodes[i][1], i, jobs_[0],)) #required processing time
                     #                         t.start()
                     t = threading.Timer(first_job_time, unlock_unavailable, (ava_nodes, first_job,))  # required processing time
                     t.start()
-                    queue.pop(0)
+                    job_queue.pop(0)
                     #                     fill = 0
                     # fso_not_found = False
                     # return
@@ -308,7 +323,7 @@ def dostat():
         file_handle.write(log_message)
         file_handle.close()
         time.sleep(TIMESTEP_UNIT)
-        if (total_time_step == 0 and len(queue) == 0 and all_jobs_submitted == True):
+        if (total_time_step == 0 and len(job_queue) == 0 and all_jobs_submitted == True):
             break
 
 
@@ -317,29 +332,13 @@ def start_jobs_submitting_thread():
     sj.start()
 
 
-start_jobs_submitting_thread()
-
-
 def start_dostat_thread():
     stat = threading.Timer(0, dostat)  # required processing time
     stat.start()
 
 
-start_dostat_thread()
-
-# 150821 huyao available except FIFO
-if (GUI.schedule == "LIFO"):
-    queue.insert(0, queue.pop(-1))
-
-
-#wait_times = []
-#for i in range(1, num):
-#    wait_times[i] = 0
-wait_sum = 0
-
-
 def loop_allocate_all_jobs():
-    global wait_sum
+    global result_wait_sum
 
     fso_not_found = False
     # global to_first
@@ -347,10 +346,10 @@ def loop_allocate_all_jobs():
     to_first = True
 
     # global first, first_num, first_cpu, first_time
-    first = queue[0]
-    first_num = queue[0][0]
-    first_cpu = queue[0][1][0]
-    first_time = queue[0][1][1]
+    first = job_queue[0]
+    first_num = job_queue[0][0]
+    first_cpu = job_queue[0][1][0]
+    first_time = job_queue[0][1][1]
 
     #
     x = 0
@@ -376,8 +375,8 @@ def loop_allocate_all_jobs():
     # while(len(queue)>0):
     while (True):
 
-        if (len(queue) > 0):
-            wait_sum = wait_sum + 1
+        if (len(job_queue) > 0):
+            result_wait_sum = result_wait_sum + 1
 
             #     print "haha", jobs_[0]
             #     print x
@@ -391,15 +390,15 @@ def loop_allocate_all_jobs():
             #         if(lock==False):
             if (transform == False and to_first == True and fso_not_found == False):
                 if (GUI.schedule == "LIFO"):
-                    queue.insert(0, queue.pop(-1))
-                first = queue[0]
-                first_num = queue[0][0]
-                first_cpu = queue[0][1][0]
-                first_time = queue[0][1][1]
+                    job_queue.insert(0, job_queue.pop(-1))
+                first = job_queue[0]
+                first_num = job_queue[0][0]
+                first_cpu = job_queue[0][1][0]
+                first_time = job_queue[0][1][1]
 
                 if (first_cpu < 1 or first_cpu > size_grid_x * size_grid_y or first_time < 0):
                     print(datetime.datetime.now(), "job: ", first, " can not be scheduled due to errorous requests")
-                    queue.pop(0)
+                    job_queue.pop(0)
                     reset()
                     #         checkover()
                     to_first = True
@@ -437,7 +436,7 @@ def loop_allocate_all_jobs():
             if (y > size_grid_y):
                 if (transform == False):
                     print(datetime.datetime.now(), "job: ", first, " can not be scheduled due to lack of resources")
-                    queue.pop(0)
+                    job_queue.pop(0)
                     to_first = True
                 #             checkover()
                 else:
@@ -482,7 +481,7 @@ def loop_allocate_all_jobs():
                                 if (RG.nodes[(xxx, yyy)]["ava"] == "yes"):
                                     RG.nodes[(xxx, yyy)]["ava"] = "no"
                                     #                             print "(", xxx, ", ", yyy, ") "
-                                    nodelist.append((xxx, yyy))
+                                    nodelist_to_draw.append((xxx, yyy))
                                     # print RG.node[(xxx,yyy)]
                                     ava_to_unava.append((xxx, yyy))
                                 #                             t = threading.Timer(jobs_[0][1][1], unlock, (RG.node[(xxx,yyy)], xxx, yyy, xx, yy, jobs_[0],)) #required processing time
@@ -492,7 +491,7 @@ def loop_allocate_all_jobs():
                         t = threading.Timer(first_time, unlock_unavailable,
                                             (ava_to_unava, first,))  # required processing time
                         t.start()
-                        queue.pop(0)
+                        job_queue.pop(0)
                         found = True
                         #                 transform = False
                         #                 fill = 0
@@ -521,22 +520,34 @@ def loop_allocate_all_jobs():
             break
 
 
-loop_allocate_all_jobs()
+def simulation_main():
+    global all_jobs
+    initialize_graph()
+    all_jobs = get_jobs_list()
+    initialize_job_queue()
+    #
+    start_jobs_submitting_thread()
+    start_dostat_thread()
+    #
+    loop_allocate_all_jobs()
+    if (False):
+        draw_image()
+    print("", flush=True)
+    print("-------------", size_grid_x, "wait_sum: ", result_wait_sum.real / 100.0)
+
+
+simulation_main()
+
+nodelist_to_draw = []
 
 def draw_image():
     pos = dict(list(zip(RG, RG)))
     nx.draw(RG, pos, node_size=30, with_labels=True)
     # nx.draw_networkx_nodes(RG,pos,nodelist=[(0,0)],node_color='b')
-    nx.draw_networkx_nodes(RG, pos, nodelist=nodelist, node_color='b')
+    nx.draw_networkx_nodes(RG, pos, nodelist=nodelist_to_draw, node_color='b')
     plt.setp(plt.gca(), 'ylim', list(reversed(plt.getp(plt.gca(), 'ylim'))))
     # plt.setp(plt.gca(), 'xlim', list(reversed(plt.getp(plt.gca(), 'xlim'))))
     # plt.show(block = False)
     plt.show()
 
 
-if (False):
-    draw_image()
-
-print("", flush=True)
-
-print("-------------", size_grid_x, "wait_sum: ", wait_sum.real / 100.0)
