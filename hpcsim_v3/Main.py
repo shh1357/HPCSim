@@ -18,7 +18,7 @@ import time
 import datetime
 
 # simulation constants
-TIMESTEP = 1
+TIMESTEP_UNIT = 1
 SPEED_UP_FACTOR = 100000.0
 NUM_SIMULATION_JOBS = 100
 
@@ -46,51 +46,55 @@ size_grid_y = GUI.yyyy  # grid width
 RG = nx.grid_2d_graph(size_grid_x, size_grid_y)
 # pos = dict(list(zip(RG, RG)))
 
-for i in range(size_grid_x):
-    for j in range(size_grid_y):
-        RG.nodes[(i, j)]["ava"] = "yes"  # node availabitily
-# else:
-#     torus_d = int(GUI.topo[0])
-#     if(torus_d == 2): #8*8
-#         RG = nx.grid_graph(dim=[8,8], periodic=True)
-# #         pos = dict(zip(RG,RG)) 
-#         for a in range(8):
-#             for b in range(8):
-# #                 RG.add_node((a,b))
-#                 RG.node[(a,b)]["ava"] = "yes"
-#     if(torus_d == 3): #8*8*8
-#         RG = nx.grid_graph(dim=[8,8,8], periodic=True)
-# #         pos = dict(zip(RG,RG)) 
-#         for a in range(8):
-#             for b in range(8):
-#                 for c in range(8):
-# #                     RG.add_node((a,b,c))
-#                     RG.node[(a,b,c)]["ava"] = "yes"
-#     if(torus_d == 4): #8*8*8*4
-#         RG = nx.grid_graph(dim=[8,8,8,4], periodic=True)
-# #         pos = dict(zip(RG,RG)) 
-#         for a in range(8):
-#             for b in range(8):
-#                 for c in range(8):
-#                     for d in range(4):
-# #                         RG.add_node((a,b,c,d))
-#                         RG.node[(a,b,c,d)]["ava"] = "yes"
-#     if(torus_d == 5): #8*8*8*4*4
-#         RG = nx.grid_graph(dim=[8,8,8,4,4], periodic=True)
-# #         pos = dict(zip(RG,RG)) 
-#         for a in range(8):
-#             for b in range(8):
-#                 for c in range(8):
-#                     for d in range(4):
-#                         for e in range(4):
-# #                             RG.add_node((a,b,c,d,e))
-#                             RG.node[(a,b,c,d,e)]["ava"] = "yes"
+def initialize_RG():
+    for i in range(size_grid_x):
+        for j in range(size_grid_y):
+            RG.nodes[(i, j)]["ava"] = "yes"  # node availabitily
+    # else:
+    #     torus_d = int(GUI.topo[0])
+    #     if(torus_d == 2): #8*8
+    #         RG = nx.grid_graph(dim=[8,8], periodic=True)
+    # #         pos = dict(zip(RG,RG))
+    #         for a in range(8):
+    #             for b in range(8):
+    # #                 RG.add_node((a,b))
+    #                 RG.node[(a,b)]["ava"] = "yes"
+    #     if(torus_d == 3): #8*8*8
+    #         RG = nx.grid_graph(dim=[8,8,8], periodic=True)
+    # #         pos = dict(zip(RG,RG))
+    #         for a in range(8):
+    #             for b in range(8):
+    #                 for c in range(8):
+    # #                     RG.add_node((a,b,c))
+    #                     RG.node[(a,b,c)]["ava"] = "yes"
+    #     if(torus_d == 4): #8*8*8*4
+    #         RG = nx.grid_graph(dim=[8,8,8,4], periodic=True)
+    # #         pos = dict(zip(RG,RG))
+    #         for a in range(8):
+    #             for b in range(8):
+    #                 for c in range(8):
+    #                     for d in range(4):
+    # #                         RG.add_node((a,b,c,d))
+    #                         RG.node[(a,b,c,d)]["ava"] = "yes"
+    #     if(torus_d == 5): #8*8*8*4*4
+    #         RG = nx.grid_graph(dim=[8,8,8,4,4], periodic=True)
+    # #         pos = dict(zip(RG,RG))
+    #         for a in range(8):
+    #             for b in range(8):
+    #                 for c in range(8):
+    #                     for d in range(4):
+    #                         for e in range(4):
+    # #                             RG.add_node((a,b,c,d,e))
+    #                             RG.node[(a,b,c,d,e)]["ava"] = "yes"
+
+
+initialize_RG()
 
 
 # nx.write_adjlist(RG,"test.adjlist")
 
 
-def return_jobs_list():
+def get_jobs_list():
     jobs = {}
 
     # jobs[0] = (4,8)   #job number, required cpus, required time (in seconds)
@@ -123,21 +127,17 @@ def return_jobs_list():
     return list(jobs.items())
 
 
-
-
-
-job_samples = return_jobs_list()
+job_samples = get_jobs_list()
 queue = [job_samples[0]]
 # current = job_samples[0][1][2]
-#num = len(job_samples)
-all_submitted = False
+# num = len(job_samples)
+all_jobs_submitted = False
 
 
 # lock = False
 def submit_jobs():
     current = job_samples[0][1][2]
-    global queue, all_submitted
-    global wait_sum
+    global queue, all_jobs_submitted
     for i in range(1, NUM_SIMULATION_JOBS):
         wait = job_samples[i][1][2] - current
         if (wait >= 0):
@@ -160,13 +160,12 @@ def submit_jobs():
             #             if(GUI.schedule == "LIFO"):
             #                 queue.insert(1, queue.pop(-1))
             #             lock = False
-            #wait_sum = wait_sum + wait
             print(datetime.datetime.now(), "job: ", job_samples[i], " is submitted")
         else:
             print(datetime.datetime.now(), "job: ", job_samples[i], " can not be submitted")
             i = i + 1
         if (i == NUM_SIMULATION_JOBS - 1):
-            all_submitted = True
+            all_jobs_submitted = True
 
 
 # jobs_ = jobs.items()    #dic -> tuple
@@ -280,34 +279,34 @@ def dostat():
     # timestep = 0.5     150826 huyao scheduling->pwa  0.5->1
     # timestep = TIMESTEP
 
-    ts = 0  # time step
-    tn = size_grid_x * size_grid_y  # total nodes
+    wall_time_step = 0  # time step
+    total_nodes_num = size_grid_x * size_grid_y  # total nodes
     #     f = open("stat_su", "w") #system utilization
-    dt = str(datetime.datetime.now())
-    dt = dt.replace(" ", "-")
-    dt = dt.replace(".", "-")
-    dt = dt.replace(":", "-")
-    ar = PWA.archive.replace(".", "-")
-    fn = "stat_su_" + dt + "_" + str(size_grid_x * size_grid_y) + "_" + GUI.schedule + "_" + GUI.mode + "_" + ar  # file name
-    f = open(fn, "w")  # system utilization
-    f.write("#timestep  occupied  total  utilization\n")
-    f.close()
+    date_time_now = str(datetime.datetime.now()).replace(" ", "-").replace(".", "-").replace(":", "-")
+    # date_time_now = date_time_now.replace(" ", "-")
+    # date_time_now = date_time_now.replace(".", "-")
+    # date_time_now = date_time_now.replace(":", "-")
+    archive_name = PWA.archive.replace(".", "-")
+    file_name = "stat_su_" + date_time_now + "_" + str(size_grid_x * size_grid_y) + "_" + GUI.schedule + "_" + GUI.mode + "_" + archive_name  # file name
+    file_handle = open(file_name, "w")  # system utilization
+    file_handle.write("#timestep  occupied  total  utilization\n")
+    file_handle.close()
     #     while(stopwrite==False):
     while (True):
-        total = 0
+        total_time_step = 0
         for ax in range(size_grid_y):
             for ay in range(size_grid_x):
                 if (RG.nodes[(ax, ay)]["ava"] == "no"):
-                    total = total + TIMESTEP
-        ts = ts + TIMESTEP
+                    total_time_step = total_time_step + TIMESTEP_UNIT
+        wall_time_step = wall_time_step + TIMESTEP_UNIT
         #         print ts, "    ", total/tn
-        s = str(ts * TIMESTEP) + "    " + str(total) + "    " + str(tn) + "    " + str(
-            float(total) / tn) + "\n"  # 150826 huyao ts->ts*timestep
-        f = open(fn, "a")  # system utilization
-        f.write(s)
-        f.close()
-        time.sleep(TIMESTEP)
-        if (total == 0 and len(queue) == 0 and all_submitted == True):
+        log_message = (str(wall_time_step * TIMESTEP_UNIT) + "    " + str(total_time_step) + "    " + str(total_nodes_num) + "    "
+                       + str(float(total_time_step) / total_nodes_num) + "\n")  # 150826 huyao ts->ts*timestep
+        file_handle = open(file_name, "a")  # system utilization
+        file_handle.write(log_message)
+        file_handle.close()
+        time.sleep(TIMESTEP_UNIT)
+        if (total_time_step == 0 and len(queue) == 0 and all_jobs_submitted == True):
             break
 
 
@@ -318,9 +317,13 @@ def start_jobs_submitting_thread():
 
 start_jobs_submitting_thread()
 
-stat = threading.Timer(0, dostat)  # required processing time
-stat.start()
 
+def start_dostat_thread():
+    stat = threading.Timer(0, dostat)  # required processing time
+    stat.start()
+
+
+start_dostat_thread()
 
 # 150821 huyao available except FIFO
 if (GUI.schedule == "LIFO"):
@@ -513,7 +516,7 @@ def loop_allocate_all_jobs():
                 if (found == True):
                     break
                     # print len(jobs_)
-        elif (all_submitted == True):
+        elif (all_jobs_submitted == True):
             break
 
 
