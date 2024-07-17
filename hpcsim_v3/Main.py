@@ -233,13 +233,12 @@ def unlock_unavailable(nl, job):
 #     if(i==0):
 #         print datetime.datetime.now(), "job: ", job, "is finished"
 # 150825 huyao
-fso_not_found = False
 
 
 def fso(first_job, first_job_cpu, first_job_time):
     count = 0
     ava_nodes = []
-    global fso_not_found
+    # global fso_not_found
     for yy in range(size_grid_y):
         for xx in range(size_grid_x):
             if (RG.nodes[(xx, yy)]["ava"] == "yes"):
@@ -257,10 +256,12 @@ def fso(first_job, first_job_cpu, first_job_time):
                     t.start()
                     queue.pop(0)
                     #                     fill = 0
-                    fso_not_found = False
-                    return
-            if (xx == size_grid_x - 1 and yy == size_grid_y - 1):
-                fso_not_found = True
+                    # fso_not_found = False
+                    # return
+                    return False
+            # if (xx == size_grid_x - 1 and yy == size_grid_y - 1):
+            #     fso_not_found = True
+    return True
 
 
 #     lock = False
@@ -369,6 +370,8 @@ def loop_allocate_all_jobs():
 
     # while(len(queue)>0):
     while (True):
+        fso_not_found = False
+
         if (len(queue) > 0):
             wait_sum = wait_sum + 1
 
@@ -400,7 +403,7 @@ def loop_allocate_all_jobs():
 
                     # 150819 huyao pure fso
             if (GUI.mode == "FSO"):
-                fso(first, first_cpu, first_time)
+                fso_not_found = fso(first, first_cpu, first_time)
                 continue
 
             if (transform == True):
