@@ -245,6 +245,12 @@ def unlock_unavailable(nl, job):
 #         print datetime.datetime.now(), "job: ", job, "is finished"
 # 150825 huyao
 
+def qubo_allocation(first_job, first_job_cpu, first_job_time):
+    global RG, all_jobs
+    # you can do anything
+    # return True if you have successfully allocated the first job
+    return False
+
 
 def fso(first_job, first_job_cpu, first_job_time):
     count = 0
@@ -403,6 +409,10 @@ def loop_allocate_all_jobs():
                     # 150819 huyao pure fso
             if (GUI.mode == "FSO"):
                 fso_not_found = fso(first, first_cpu, first_time)
+                continue
+
+            if (GUI.mode == "QUBO"):
+                fso_not_found = qubo_allocation(first, first_cpu, first_time)
                 continue
 
             if (transform == True):
