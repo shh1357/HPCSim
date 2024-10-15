@@ -338,6 +338,7 @@ def start_dostat_thread():
     stat = threading.Timer(0, dostat)  # required processing time
     stat.start()
 
+nodelist_to_draw = []
 
 def loop_allocate_all_jobs():
     global result_wait_sum
@@ -546,8 +547,6 @@ def simulation_main():
 
 
 simulation_main()
-
-nodelist_to_draw = []
 
 def draw_image():
     pos = dict(list(zip(RG, RG)))
